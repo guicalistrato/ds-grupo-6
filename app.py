@@ -1,107 +1,122 @@
-import os
-import streamlit as st
-from google import genai
-from dotenv import load_dotenv
+from flask import Flask, flash, redirect, render_template, request, session
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_session import Session
+import sqlite3
+from boole import run_boole
 
-# Carrega variáveis de ambiente
-load_dotenv(".env.local")
+from funcoes import login_required
+# configuração inicial
+app = Flask(__name__)
 
-# Obtém a chave da API
-api_key = os.getenv("GEMINI_API_KEY")
+# armazena os dados no servidor ao inves dos cookies
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
-# Valida se a chave existe
-if not api_key:
-    st.error("API KEY não encontrada no .env.local")
-    st.stop()
+# garante que usuario nao consiga acessar versoes antigas
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
 
-# Inicializa cliente da API
-client = genai.Client(api_key=api_key)
+# pagina inicial
+@app.route("/", methods=["GET", "POST"])
+@login_required
+def index():
+    if request.method == 'POST':
+        dados = request.get_json()
+        print(dados)
+        if not dados:
+            return {"erro": "Dados não recebidos"}, 400
+        
+        # recebe pergunta e roda função para boole gerar resposta
+        duvida = dados.get('duvida')
+        resposta_boole = run_boole(duvida)
+        print(resposta_boole)
 
-# Define comportamento do tutor
-SYSTEM_PROMPT = """
-Você é o Boole, um tutor de programação voltado ao aprendizado.
+        # retorna o resultado em forma de json
+        return {"resultado": resposta_boole}, 200
 
-Regras obrigatórias:
-- Nunca forneça código.
-- Nunca forneça pseudocódigo.
-- Nunca forneça snippets, templates ou implementação parcial.
-- Nunca resolva exercícios diretamente.
-- Nunca entregue solução pronta.
-- Você pode analisar enunciados e trechos de código enviados pelo usuário, mas deve responder apenas de forma conceitual.
-
-Seu papel é:
-- explicar conceitos com clareza;
-- utilizar analogias e exemplos de outras áreas para facilitar o entendimento;
-- ajudar o aluno com lógica e raciocínio;
-- decompor problemas em partes menores;
-- orientar com perguntas guiadas;
-- ajudar a identificar entrada, saída e regras do problema;
-- explicar erros conceitualmente, sem escrever a correção em código.
-
-Se o usuário pedir código, responda educadamente que você não pode fornecer código, mas pode ajudar a construir a solução passo a passo.
-"""
-
-# Detecta respostas que parecem código real
-def contem_codigo(texto: str) -> bool:
-    texto_lower = texto.lower()
-
-    if "```" in texto_lower:
-        return True
-
-    padroes_fortes = [
-        "def ",
-        "class ",
-        "return ",
-        "print(",
-        "while ",
-        "for ",
-        "if ",
-        "else:",
-        "elif ",
-        "import ",
-        "{",
-        "}",
-        ";"
-    ]
-
-    contador = sum(1 for p in padroes_fortes if p in texto_lower)
-    return contador >= 3
-
-# Interface
-st.title("Boole - Tutor de Programação")
-st.write("Este tutor ajuda você a resolver problemas com lógica e raciocínio, sem fornecer código pronto.")
-
-pergunta = st.text_input("Digite sua pergunta:")
-
-if st.button("Perguntar"):
-    if pergunta.strip():
-        full_prompt = f"""
-{SYSTEM_PROMPT}
-
-Pergunta do aluno:
-{pergunta}
-"""
-
-        with st.spinner("Pensando..."):
-            try:
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=full_prompt
-                )
-
-                resposta = response.text if hasattr(response, "text") else ""
-
-                if not resposta:
-                    st.warning("A API respondeu, mas não retornou texto.")
-                elif contem_codigo(resposta):
-                    st.subheader("Resposta:")
-                    st.write("Não posso fornecer código, mas posso te ajudar a pensar na solução.")
-                    st.write("Comece identificando qual é a entrada do problema, qual é a saída esperada e quais condições precisam ser verificadas para chegar ao resultado.")
-                else:
-                    st.subheader("Resposta:")
-                    st.write(resposta)
-
-            except Exception as error:
-                st.error(f"Erro ao chamar a API: {error}")
     else:
-        st.warning("Digite uma pergunta antes de enviar.")
+        return render_template("index.html")
+
+# página de login
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    session.clear()
+
+    if request.method == 'POST':
+        # recebe os dados do javascript
+        dados = request.get_json()
+        
+        if not dados:
+            return {"erro": "Dados não recebidos"}, 400 
+            
+        usuario = dados.get('usuario')
+        senha = dados.get('senha')
+
+        # checa se os dados batem
+        with sqlite3.connect('dados.db') as conn:
+            db = conn.cursor()
+            db.execute("SELECT senha FROM usuarios WHERE usuario = ?", (usuario,))
+            senha_db = db.fetchone()
+
+        if senha_db and check_password_hash(senha_db[0], senha):
+            session["user_id"] = usuario
+            print('ok')
+            return {"redirect": "/"}, 200
+        else:
+            print('nao ok')
+
+    # exibe a pagina
+    else:
+        return render_template('login.html')
+
+# página de criar conta
+@app.route('/criar-conta', methods=["GET", "POST"])
+def criar_conta():
+    session.clear()
+
+    if request.method == 'POST':
+        # recebe os dados pelo json
+        dados = request.get_json()
+        
+        if not dados:
+            return "Erro: Dados não recebidos", 400
+            
+        usuario = dados.get('usuario')
+        senha = dados.get('senha')
+        senha_confirma = dados.get('senha_confirma')
+
+        print(f'DEBUG: usuario : {usuario}, senha : {senha}, senha2 : {senha_confirma}')
+
+        # checa se as senhas sao iguais
+        if senha == senha_confirma:
+            hash = generate_password_hash(senha)
+
+            # guarda usuario e senha no banco de dados
+            with sqlite3.connect('dados.db') as conn:
+                db = conn.cursor()
+
+                # checa se o usuario ja existe
+                db.execute("SELECT usuario FROM usuarios WHERE usuario = ?", (usuario,))
+                usuario_existente = db.fetchone()
+
+                # se sim, retorna o erro
+                if usuario_existente:
+                    return {"erro": "Esse nome de usuário já está em uso."}, 400
+
+                else:
+                    db.execute("INSERT INTO usuarios (usuario, senha) VALUES (?, ?);", (usuario, hash))
+                    conn.commit()
+            
+            # redireciona para a tela de login
+            return {"redirect": "/login"}, 400
+
+        # se as senhas forem diferentes, retorna para a parte de criar conta
+        else:
+            return {"redirect": "/criar-conta"}, 200
+    else:
+        return render_template('criar_conta.html')

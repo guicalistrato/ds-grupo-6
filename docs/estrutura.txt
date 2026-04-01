@@ -1,0 +1,8 @@
+Algumas informações sobre o programa
+=====================
+TABELAS SQL
+
+usuarios:
+usuario - text
+senha - text
+=====================

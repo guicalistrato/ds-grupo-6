@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Boole - Login</title>
+</head>
+<body>
+    <hr>
+
+    <h2>Login</h2>
+    <div>
+        <input type="text" id="usuario" placeholder="Usuário">
+        <p><input type="password" id="senha" placeholder="Senha"></p>
+        <button type="button" onclick="enviar_dados()">Enviar</button>
+    </div>
+
+    <h3>Não tem uma conta? Crie uma:</h3>
+    <div>
+        <button type="button" onclick="criar_conta()">Criar Conta</button>
+    </div>
+
+    <script>
+        function enviar_dados() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario: usuario, senha: senha }),
+            })
+            .then(response => response.json()) 
+
+            .then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect; 
+                } else if (data.erro) {
+                    alert(data.erro); 
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+            
+        }
+
+        function criar_conta() {
+            window.location.href = '/criar-conta';
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Criar Conta</title>
+</head>
+<body>
+    <hr>
+
+    <h2>Criar Conta</h2>
+    <div>
+        <input type="text" id="usuario" placeholder="Usuário">
+        <p><input type="password" id="senha" placeholder="Senha"></p>
+        <p><input type="password" id="senha_confirma" placeholder="Confirme sua senha"></p>
+        <button type="button" onclick="criacao_conta()">Enviar</button>
+    </div>
+
+    <script>
+        function criacao_conta() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+            const senha_confirma = document.getElementById('senha_confirma').value;
+
+            fetch('/criar-conta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario: usuario, senha: senha, senha_confirma: senha_confirma }),
+            })
+            .then(response => response.json())
+                .then(data => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect; // AQUI acontece o redirecionamento real
+                    } else {
+                        alert(data.erro);
+                    }
+             });
+        }
+    </script>
+
+</body>
+</html>
