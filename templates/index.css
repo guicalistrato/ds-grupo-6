@@ -9,6 +9,7 @@
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .sidebar a, h2 {
@@ -29,18 +30,24 @@
   margin-left: 50px;
 }
 
+.sidebar .closebtn:hover {
+  color: white;
+}
+
 .openbtn {
   font-size: 20px;
   cursor: pointer;
   padding: 10px 15px;
   border: none;
+  background-color: transparent
 }
 
 .openbtn:hover {
-  background-color: #444;
+  color: grey;
 }
 
 #main-content {
   transition: margin-left .5s;
   padding: 16px;
+  font-family: Arial, Helvetica, sans-serif;
 }
