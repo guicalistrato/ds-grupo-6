@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Assistente</title>
+</head>
+<body>
+  <div class="chat-container" id="chat-container" data-component="chat">
+    <header class="chat-header" id="chat-header" data-section="header">
+      <button
+        type="button"
+        class="menu-button"
+        id="menu-button"
+        data-action="toggle-menu"
+        aria-label="Abrir menu"
+      >
+        &#9776;
+      </button>
+
+      <h1 class="chat-title" id="chat-title" data-role="chat-title">
+        Dúvidas sobre funções recursivas
+      </h1>
+    </header>
+
+    <main class="chat-main" id="chat-main" data-section="main">
+      <section
+        class="chat-messages"
+        id="chat-messages"
+        data-section="messages"
+        aria-live="polite"
+        aria-label="Mensagens do chat"
+      >
+        <div
+          class="message message-bot"
+          id="message-1"
+          data-message-id="1"
+          data-author="bot"
+        >
+          <div class="bubble" data-role="message-bubble">
+            Olá! Sou o Boole, seu tutor de programação.
+          </div>
+        </div>
+
+        <div
+          class="message message-user"
+          id="message-2"
+          data-message-id="2"
+          data-author="user"
+        >
+          <div class="bubble" data-role="message-bubble">
+            Pode me explicar recursão?
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="chat-input" id="chat-input" data-section="input">
+      <form id="chat-form" data-role="chat-form" action="#" method="post">
+        <label for="input-field">Mensagem</label>
+        <input
+          type="text"
+          class="input-field"
+          id="input-field"
+          name="message"
+          placeholder="No que posso te ajudar?"
+          autocomplete="off"
+          data-role="message-input"
+        />
+        <button
+          type="submit"
+          class="send-button"
+          id="send-button"
+          data-action="send-message"
+          aria-label="Enviar mensagem"
+        >
+          Enviar
+        </button>
+      </form>
+    </footer>
+  </div>
+</body>
+</html>
