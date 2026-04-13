@@ -5,29 +5,28 @@
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  background-color: #164B4D;
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.sidebar a, h2 {
-  padding: 8px 8px 8px 32px;
+.sidebar li {
+  padding: 8px 8px 8px 8px;
   text-decoration: none;
-  font-size: 25px;
-  color: #818181;
+  font-size: 16px;
+  color: #fff;
   display: block;
-  transition: 0.3s;
+  transition: 0.5s;
 }
 
 
 .sidebar .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 20px;
-  margin-left: 50px;
+  font-size: 30px;
+  color: #022C2D;
+  text-decoration: none;
+
 }
 
 .sidebar .closebtn:hover {
@@ -35,7 +34,7 @@
 }
 
 .openbtn {
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
   padding: 10px 15px;
   border: none;
@@ -50,4 +49,62 @@
   transition: margin-left .5s;
   padding: 16px;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+#top-sidebar{
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  text-decoration: none;
+  padding: 10px;
+}
+
+#top-sidebar-title{
+  font-weight: bold;
+  color: #fff;
+  font-size: 20px;
+}
+
+
+.toggle-button {
+  background:transparent;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 200px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  display: inline-block;
+  margin-right: 10px;
+  transition: transform 0.3s;
+}
+
+.content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background: transparent;
+  width: 200px;
+  color: grey;
+}
+
+.content ul {
+  list-style: none;
+  padding: 10px 20px;
+  margin: 0;
+  color: grey;
+}
+
+.content.open {
+  max-height: 200px; 
+}
+
+.toggle-button.active .arrow {
+  transform: rotate(90deg);
 }

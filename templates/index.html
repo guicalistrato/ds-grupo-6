@@ -6,21 +6,74 @@
 <body>
     <script>
         function openSidebar() {
-            document.getElementById("mySidebar").style.width = "250px";
+            document.getElementById("Sidebar").style.width = "250px";
             document.getElementById("main-content").style.marginLeft = "250px";
         }
 
         function closeSidebar() {
-            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("Sidebar").style.width = "0";
             document.getElementById("main-content").style.marginLeft = "0";
         }
     </script>
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">☰</a>
-        <h2>Sua Área</h2>
-        <h2>Nova conversa</h2>
-        <a href="#">Dúvidas</a>
-        <a href="#">Arquivos</a>
+    <div id="Sidebar" class="sidebar">
+        <div id="top-sidebar">
+            <div>
+                <img src="../assets/logo-robo.png" alt="Boole" style="height: 30px;">
+                <span id="top-sidebar-title">Sua área</span>
+            </div>
+            <div>
+                <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">☰</a>
+            </div>
+            
+        </div>
+
+        <button id="nova-conversa">Nova Conversa</button>
+
+        <div class="collapsible-wrapper">
+            <button class="toggle-button">
+                <span class="arrow">▶</span> Conversas
+            </button>
+
+            <div class="content">
+                <ul>
+                    <!--ajustar isso aqui pra se tornar dinâmico-->
+                    <li>tópico1</li>
+                    <li>tópico2</li>
+                    <li>tópico3</li>
+                </ul>
+            </div>
+        </div>
+        <div class="collapsible-wrapper">
+            <button class="toggle-button">
+                <span class="arrow">▶</span> Arquivos
+            </button>
+
+            <div id="collapseContent" class="content">
+                <ul>
+                    <!--ajustar isso aqui pra se tornar dinâmico-->
+                    <li>arquivo1</li>
+                    <li>arquivo2</li>
+                    <li>arquivo3</li>
+                </ul>
+            </div>
+        </div>
+        <script>
+            const toggles = document.querySelectorAll('.toggle-button'); // lista de todos os botões com essa id pra aplicar a função em todos
+
+            toggles.forEach(btn =>{
+
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');  //rotação da seta 
+                
+                    const content = this.nextElementSibling; //encontrando o conteúdo da div
+
+                    content.classList.toggle('open'); // fazendo o conteudo aparecer
+                });
+            })
+
+           
+        </script>
+        
     </div>
 
     <button class="openbtn" onclick="openSidebar()">☰</button>
