@@ -1,4 +1,4 @@
-// --- 1. Sidebar Open/Close Functions (Global Scope) ---
+// funções sidebar
 window.openSidebar = function() {
     document.getElementById("Sidebar").style.width = "250px";
     document.getElementById("main-content").style.marginLeft = "250px";
@@ -9,7 +9,7 @@ window.closeSidebar = function() {
     document.getElementById("main-content").style.marginLeft = "0";
 };
 
-// --- 2. Collapsible Lists (Runs after HTML loads) ---
+// função listas colapsáveis
 document.addEventListener('DOMContentLoaded', () => {
     const toggles = document.querySelectorAll('.toggle-button');
 
@@ -20,11 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (content) {
                 content.classList.toggle('open');
             }
-        });
+        }); 
     });
 });
 
-// --- 3. API Response Function (Global Scope) ---
+// função resposta da API
 window.resposta_API = function() {
     const duvida = document.getElementById('duvida').value;
     const respostaElement = document.getElementById('resposta');
