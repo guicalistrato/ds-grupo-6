@@ -26,6 +26,16 @@ body {
     box-shadow: 0px -10px 10px var(--secondary_green_color);
 }
 
+.div_current_code_title{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    position: fixed;
+    top: 10px;
+    width: 100%;
+}
+
 /*Estilo do input de texto*/
 span[contenteditable]:empty::before {
   content: attr(data-placeholder);
@@ -74,9 +84,29 @@ span[contenteditable]:empty::before {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.send_button:hover {
+.menu_button {
+    width: 38px;
+    height: 38px;
+    align-self: left;
+
+    background-color: white;
+    border: none;
+    border-radius: 50px;
+    
+    padding-left: 3px;
+    padding-top: 3px;
+    transition: 150ms;
+
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.send_button:hover, .menu_button:hover {
     cursor: pointer;
     opacity: 0.7;
+}
+
+.send_button:active, .menu_button:active {
+    opacity: 1;
 }
 
 /*Estilo do título do código*/
@@ -85,6 +115,15 @@ span[contenteditable]:empty::before {
     justify-content: center;
     align-items: center;
     margin-top: 10px;
+    margin-left: 630px;
+}
+
+.div_menu_button {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .code_title{
@@ -98,4 +137,52 @@ span[contenteditable]:empty::before {
     padding-top: 15px;
     padding-bottom: 15px;
     align-content: center;
+}
+
+.div_code_messages{
+    display: block;
+    overflow-y: auto;
+    grid-row: 1/-1;
+}
+
+.div_message_box{
+    display: flex;
+    width: 500px;
+    flex-direction: column;
+    gap: 5px;
+    overflow: visible;
+}
+
+.div_message_box .user_message{
+    justify-content: end;
+}
+
+.div_message_box .boole_message{
+    justify-content: start;
+}
+
+.user_message{
+    display:flex;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    background-color: var(--dark_green_color);
+    justify-content: end;
+    align-self: flex-end;
+}
+
+.boole_message{
+    display:flex;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    background-color: var(--primary_green_color);
+    justify-content: start;
+    align-self: flex-start;
 }
