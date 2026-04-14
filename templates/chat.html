@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Assistente</title>
+  <title>Chat Assistente - Boole</title>
 </head>
 <body>
   <div class="chat-container" id="chat-container" data-component="chat">
+    <!-- Header -->
     <header class="chat-header" id="chat-header" data-section="header">
       <button
         type="button"
@@ -18,11 +19,17 @@
         &#9776;
       </button>
 
-      <h1 class="chat-title" id="chat-title" data-role="chat-title">
-        Dúvidas sobre funções recursivas
-      </h1>
+      <div class="header-content">
+        <h1 class="chat-title" id="chat-title" data-role="chat-title">
+          >_ OI DEV!
+        </h1>
+        <p class="chat-subtitle" id="chat-subtitle">
+          Eu sou o Boole, o seu tutor de programação. Me pergunte sobre alguma linguagem, uma dúvida ou código seu.
+        </p>
+      </div>
     </header>
 
+    <!-- Main Content -->
     <main class="chat-main" id="chat-main" data-section="main">
       <section
         class="chat-messages"
@@ -31,23 +38,13 @@
         aria-live="polite"
         aria-label="Mensagens do chat"
       >
-        <div
-          class="message message-bot"
-          id="message-1"
-          data-message-id="1"
-          data-author="bot"
-        >
+        <div class="message message-bot" id="message-1" data-message-id="1" data-author="bot">
           <div class="bubble" data-role="message-bubble">
             Olá! Sou o Boole, seu tutor de programação.
           </div>
         </div>
 
-        <div
-          class="message message-user"
-          id="message-2"
-          data-message-id="2"
-          data-author="user"
-        >
+        <div class="message message-user" id="message-2" data-message-id="2" data-author="user">
           <div class="bubble" data-role="message-bubble">
             Pode me explicar recursão?
           </div>
@@ -55,27 +52,31 @@
       </section>
     </main>
 
+    <!-- Input Footer -->
     <footer class="chat-input" id="chat-input" data-section="input">
       <form id="chat-form" data-role="chat-form" action="#" method="post">
-        <label for="input-field">Mensagem</label>
-        <input
-          type="text"
-          class="input-field"
-          id="input-field"
-          name="message"
-          placeholder="No que posso te ajudar?"
-          autocomplete="off"
-          data-role="message-input"
-        />
-        <button
-          type="submit"
-          class="send-button"
-          id="send-button"
-          data-action="send-message"
-          aria-label="Enviar mensagem"
-        >
-          Enviar
-        </button>
+        <div class="input-wrapper">
+          <label for="input-field" class="sr-only">Mensagem</label>
+          <input
+            type="text"
+            class="input-field"
+            id="input-field"
+            name="message"
+            placeholder="No que posso te ajudar?"
+            autocomplete="off"
+            data-role="message-input"
+            required
+          />
+          <button
+            type="submit"
+            class="send-button"
+            id="send-button"
+            data-action="send-message"
+            aria-label="Enviar mensagem"
+          >
+            Enviar
+          </button>
+        </div>
       </form>
     </footer>
   </div>
