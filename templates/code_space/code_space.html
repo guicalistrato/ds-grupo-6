@@ -26,9 +26,11 @@
     </div>
 
     <div class="div_input_chatbox">
-        <span class="input_chatbox" contenteditable="true" data-placeholder="Como posso te ajudar?"></span>
-        <button class="send_button"><img src="imgs/send_icon.png" width="38px" height="38px"></button>
+        <span class="input_chatbox" id="userInput" contenteditable="true" data-placeholder="Como posso te ajudar?"></span>
+        <button class="send_button" onclick="resposta_API()"><img src="imgs/send_icon.png" width="38px" height="38px"></button>
     </div>
+
+    <span style="display: inline; height: 50px; width: 100%; background-color: blue;"></span>
 
     <div class="div_code_messages">
         <div class="div_message_box">
@@ -95,6 +97,58 @@
             <div class="boole_message">resposta do teste</div>
         </div>
     </div>
+
+    <script>
+        function resposta_API()
+        {
+            const duvida = document.getElementById('userInput').textContent;
+            
+            // cria os divs da mensagem do usuário e coloca no local correto
+            const messageBoxUser = document.createElement('div');
+            messageBoxUser.className = 'div_message_box';
+
+            const userMessage = document.createElement('div');
+            userMessage.className = 'user_message';
+            userMessage.innerText = duvida;
+
+            document.getElementById('userInput').textContent = ''; //limpa o input após enviar mensagem
+
+            messageBoxUser.appendChild(userMessage);
+            document.body.querySelector('.div_code_messages').appendChild(messageBoxUser);
+
+            //divs da mensagem do boole
+            const messageBoxBoole = document.createElement('div');
+            messageBoxBoole.className = 'div_message_box';
+
+            const botMessage = document.createElement('div');
+            botMessage.className = 'boole_message';
+
+            messageBoxBoole.appendChild(botMessage);
+            document.body.querySelector('.div_code_messages').appendChild(messageBoxBoole);
+
+
+
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ duvida : duvida }),
+            })
+            // transforma a resposta em json
+            .then(response => response.json()) 
+            .then(data => {
+                if (data.resultado) {
+                    // coloca a resposta na tela
+                    botMessage.innerText = data.resultado;
+                } else if (data.erro) {
+                    alert(data.erro);
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+
+        }
+    </script>
 
 </body>
 
