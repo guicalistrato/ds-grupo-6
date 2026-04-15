@@ -7,7 +7,7 @@
     <div id="Sidebar" class="sidebar">
         <div id="top-sidebar">
             <div class="sidebar-title-area">
-                <img src="../assets/logo-robo.png" alt="Boole" style="height: 30px;">
+                <img src="{{ url_for('static', filename='images/logo-robo.png') }}" alt="Boole" style="height: 30px;">
                 <span id="top-sidebar-title">Sua área</span>
             </div>
             <div>
@@ -17,7 +17,7 @@
         </div>
 
         <button id="nova-conversa">
-            <img src="../assets/botao-nova-conversa.png" alt="">
+            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
             Nova conversa
         </button>
 
