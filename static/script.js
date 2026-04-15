@@ -44,3 +44,12 @@ window.resposta_API = function() {
     })
     .catch(error => console.error('Erro:', error));
 };
+
+window.promptCrieUsuario = () =>{
+    const botaoLogin = document.getElementById('botao-login')
+    // terminar de fazer após o back incrementar essa parte
+    // pensar na situação: usuário tentou login mas nunca se cadastrou;
+    
+}
+
+// pensando na tela de cadastro: se o usuário está disponível ou não

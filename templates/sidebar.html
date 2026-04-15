@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+    <title>Boole</title>
+    <link rel="stylesheet" href="../static/index.css">
+</head>
+<body>
+    <div id="Sidebar" class="sidebar">
+        <div id="top-sidebar">
+            <div class="sidebar-title-area">
+                <img src="{{ url_for('static', filename='images/logo-robo.png') }}" alt="Boole" style="height: 30px;">
+                <span id="top-sidebar-title">Sua área</span>
+            </div>
+            <div>
+                <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">☰</a>
+            </div>
+            
+        </div>
+
+        <button id="nova-conversa">
+            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
+            Nova conversa
+        </button>
+
+        <div class="collapsible-wrapper">
+            <button class="toggle-button">
+                <span class="arrow">▶</span> Conversas
+            </button>
+
+            <div class="content">
+                <ul>
+                    <!--ajustar isso aqui pra se tornar dinâmico-->
+                    <li>tópico1</li>
+                    <li>tópico2</li>
+                    <li>tópico3</li>
+                </ul>
+            </div>
+        </div>
+        <div class="collapsible-wrapper">
+        
+    </div>
+</body>
