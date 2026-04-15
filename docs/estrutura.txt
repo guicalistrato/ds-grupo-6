@@ -5,4 +5,10 @@ TABELAS SQL
 usuarios:
 usuario - text
 senha - text
+
+historico:
+id - int
+usuario - text
+pergunta - text
+resposta - text
 =====================
