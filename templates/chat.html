@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat Assistente - Boole</title>
+  <link rel="stylesheet" href="/static/css/chat.css" />
 </head>
 <body>
   <div class="chat-container" id="chat-container" data-component="chat">
-    <!-- Header -->
     <header class="chat-header" id="chat-header" data-section="header">
       <button
         type="button"
@@ -29,7 +29,6 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="chat-main" id="chat-main" data-section="main">
       <section
         class="chat-messages"
@@ -37,22 +36,9 @@
         data-section="messages"
         aria-live="polite"
         aria-label="Mensagens do chat"
-      >
-        <div class="message message-bot" id="message-1" data-message-id="1" data-author="bot">
-          <div class="bubble" data-role="message-bubble">
-            Olá! Sou o Boole, seu tutor de programação.
-          </div>
-        </div>
-
-        <div class="message message-user" id="message-2" data-message-id="2" data-author="user">
-          <div class="bubble" data-role="message-bubble">
-            Pode me explicar recursão?
-          </div>
-        </div>
-      </section>
+      ></section>
     </main>
 
-    <!-- Input Footer -->
     <footer class="chat-input" id="chat-input" data-section="input">
       <form id="chat-form" data-role="chat-form" action="#" method="post">
         <div class="input-wrapper">
@@ -80,5 +66,7 @@
       </form>
     </footer>
   </div>
+
+  <script defer src="/static/js/chat.js"></script>
 </body>
 </html>
