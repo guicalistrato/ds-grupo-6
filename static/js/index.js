@@ -275,7 +275,7 @@
         '.chat-container.chat-started .chat-main { padding-top: 8px; }',
         '.topic-pill {',
         '  position: absolute;',
-        '  top: 14px;',
+        '  top: 24px;',
         '  left: 50%;',
         '  transform: translateX(-50%);',
         '  max-width: min(70vw, 380px);',
