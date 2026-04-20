@@ -25,7 +25,7 @@ def after_request(response):
 @app.get("/")
 @login_required
 def index_get():
-    return render_template("chat.html")
+    return render_template("index.html")
 
 @app.post("/")
 @login_required
