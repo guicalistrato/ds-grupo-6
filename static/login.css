@@ -1,0 +1,82 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 100% da altura do viewport */
+    width: 100%;
+}
+
+#bloco-central{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    align-items: center;
+    background-color: #164B4D;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px;
+    border-radius: 35px;
+    gap: 25px;
+}
+#titulo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: monospace; 
+    font-size: 24px;
+}
+
+#main-title{
+    font-size: 39px;
+}
+
+#usuario, #senha, #botao-login{
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 8px;
+    border: none;
+    min-height: 48px;
+    min-width: 322px;
+    width: 85%; 
+    padding: 0 15px;
+    box-sizing: border-box; /* o padding não estoura a largura */
+}
+
+#usuario, #senha{
+    background-color: #022028;
+    color: #164B4D;
+    
+}
+
+#botao-login{
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+#botao-login:hover {
+    background-color: #d1d1d1;
+}
+
+#botao-criar-conta, #cont-sem-login{
+    font-family: monospace;
+    background-color: transparent;
+    border: none;
+    text-decoration: underline;
+    color: #fff; 
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+#botoes-extras{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#botao-criar-conta:hover, #cont-sem-login:hover {
+    color: #7c7c7c;
+}

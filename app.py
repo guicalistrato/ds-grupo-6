@@ -40,6 +40,13 @@ def index_post():
     resposta_boole = run_boole(duvida)
     print(resposta_boole)
 
+    # armazena respostas no histórico
+    with sqlite3.connect('dados.db') as conn:
+        db = conn.cursor()
+        db.execute("INSERT INTO historico (usuario, pergunta, resposta) VALUES (?, ?, ?);", (session["user_id"], duvida, resposta_boole))
+
+        conn.commit()
+
     # retorna o resultado em forma de json
     return {"resultado": resposta_boole}, 200
 
