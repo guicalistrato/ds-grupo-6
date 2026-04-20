@@ -56,8 +56,8 @@
 }
 
 #top-sidebar{
-  display: flex;         /* Enables Flexbox */
-  align-items: center;    /* Vertically centers items on the same axis */
+  display: flex;        
+  align-items: center;    
   gap: 10px;             
   top: 0;
   display: flex;

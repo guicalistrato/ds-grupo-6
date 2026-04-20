@@ -2,52 +2,29 @@
 <html lang="pt-br">
 <head>
     <title>Boole - Login</title>
+    <link rel="stylesheet" href="../static/login.css">
 </head>
 <body>
-    <hr>
+    <div id="bloco-central">
 
-    <h2>Login</h2>
-    <div>
-        <input type="text" id="usuario" placeholder="Usuário">
-        <p><input type="password" id="senha" placeholder="Senha"></p>
-        <button type="button" id="botao-login" onclick="enviar_dados()">Enviar</button>
+        <div id="titulo">
+            <h2>Bem-vindo, dev!</h2>
+            <h4>Faça seu login ou signup</h4>
+        </div>
+
+        <div>
+            <input type="text" id="usuario" placeholder="Usuário">
+            <p><input type="password" id="senha" placeholder="Senha"></p>
+            <button type="button" id="botao-login" onclick="enviar_dados()">Continuar</button>
+        </div>
+
+        <div id="botoes-extras">
+            <button id="botao-criar-conta" type="button" onclick="criar_conta()">Crie uma conta</button>
+            <button id="cont-sem-login"  type="button">Continuar sem login</button>
+        </div>
+
     </div>
-
-    <h3>Não tem uma conta? Crie uma:</h3>
-    <div>
-        <button type="button" onclick="criar_conta()">Criar Conta</button>
-    </div>
-
-    <script>
-        function enviar_dados() {
-            const usuario = document.getElementById('usuario').value;
-            const senha = document.getElementById('senha').value;
-
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ usuario: usuario, senha: senha }),
-            })
-            .then(response => response.json()) 
-
-            .then(data => {
-                if (data.redirect) {
-                    window.location.href = data.redirect; 
-                } else if (data.erro) {
-                    alert(data.erro); 
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-            
-        }
-
-        function criar_conta() {
-            window.location.href = '/criar-conta';
-        }
-
-    </script>
+    <script src="../static/script.js"></script>
 
 </body>
 </html>

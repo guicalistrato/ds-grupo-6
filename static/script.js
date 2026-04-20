@@ -45,6 +45,36 @@ window.resposta_API = function() {
     .catch(error => console.error('Erro:', error));
 };
 
+function enviar_dados() {
+    const usuario = document.getElementById('usuario').value;
+    const senha = document.getElementById('senha').value;
+
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ usuario: usuario, senha: senha }),
+    })
+    .then(response => response.json()) 
+
+    .then(data => {
+        if (data.redirect) {
+            window.location.href = data.redirect; 
+        } else if (data.erro) {
+            alert(data.erro); 
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+    
+}
+
+function criar_conta() {
+    window.location.href = '/criar-conta';
+}
+
+
+// função suporte tela de login e tela de cadastro (error handling)
 window.promptCrieUsuario = () =>{
     const botaoLogin = document.getElementById('botao-login')
     // terminar de fazer após o back incrementar essa parte
@@ -52,4 +82,4 @@ window.promptCrieUsuario = () =>{
     
 }
 
-// pensando na tela de cadastro: se o usuário está disponível ou não
+// tela de cadastro: se o usuário está disponível ou não

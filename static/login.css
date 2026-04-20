@@ -1,0 +1,44 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 100% da altura do viewport */
+    width: 100%
+}
+
+#bloco-central{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    align-items: center;
+    background-color: #164B4D;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#botao-criar-conta, #cont-sem-login{
+    font-family: monospace;
+    background-color: transparent;
+    border: none;
+    text-decoration: underline;
+    color: #fff; 
+}
+
+#botoes-extras{
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+#botao-criar-conta:hover{
+    color: grey;
+}
+
+#cont-sem-login:hover{
+    color: grey;
+}
