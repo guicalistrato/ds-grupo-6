@@ -1,23 +1,78 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <title>Boole</title>
-    <link rel="stylesheet" href="../static/index.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Assistente - Boole</title>
+  <link rel="stylesheet" href="/static/css/index.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
-    {% include "sidebar.html" %}
-    <button class="openbtn" onclick="openSidebar()">☰</button>
-    <div id="main-content">
-        <h3>Digite sua dúvida: </h3>
-        <div>
-            <input type="text" id="duvida" placeholder="Dúvida">
-            <button type="button" onclick="resposta_API()">Enviar</button>
+  <div class="chat-container" id="chat-container" data-component="chat">
+    <header class="chat-header" id="chat-header" data-section="header">
+      <button
+        type="button"
+        class="menu-button"
+        id="menu-button"
+        data-action="toggle-menu"
+        aria-label="Abrir menu"
+      >
+        <img src="/static/imgs/menu_icon.png" width="48px" height="36px">
+      </button>
+
+      <div class="header-content">
+        <h1 class="chat-title" id="chat-title" data-role="chat-title">
+          >_ OI DEV!
+        </h1>
+        <p class="chat-subtitle" id="chat-subtitle">
+          Eu sou o Boole, o seu tutor de programação. Me pergunte sobre alguma linguagem, uma dúvida ou código seu.
+        </p>
+      </div>
+    </header>
+
+    <main class="chat-main" id="chat-main" data-section="main">
+      <section
+        class="chat-messages"
+        id="chat-messages"
+        data-section="messages"
+        aria-live="polite"
+        aria-label="Mensagens do chat"
+      ></section>
+    </main>
+
+    <footer class="chat-input" id="chat-input" data-section="input">
+      <form id="chat-form" data-role="chat-form" action="#" method="post">
+        <div class="input-wrapper">
+          <label for="input-field" class="sr-only">Mensagem</label>
+          <input
+            type="text"
+            class="input-field"
+            id="input-field"
+            name="message"
+            placeholder="No que posso te ajudar?"
+            autocomplete="off"
+            data-role="message-input"
+            required
+          />
+          <button
+            type="submit"
+            class="send-button"
+            id="send-button"
+            data-action="send-message"
+            aria-label="Enviar mensagem"
+          >
+            <img src="/static/imgs/send_icon.png" width="38px" height="38px">
+          </button>
         </div>
+      </form>
+    </footer>
+  </div>
 
-        <h3>Resposta do Boole:</h3>
-        <p id="resposta" style="color: blue;"></p>
-
-    </div>
-
-    <script src="../static/script.js"></script>
-
+  <script defer src="/static/js/index.js"></script>
 </body>
+</html>
