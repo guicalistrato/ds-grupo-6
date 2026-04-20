@@ -114,6 +114,7 @@ body {
   flex-direction: column;
   gap: 14px;
   padding: 8px 4px 8px 0;
+  margin-bottom: 200px;
 }
 
 .chat-main::-webkit-scrollbar {
@@ -147,6 +148,8 @@ body {
   font-size: 0.98rem;
   line-height: 1.45;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  margin-left: 56px;
+  margin-right: 56px;
 }
 
 .message-user .bubble {
