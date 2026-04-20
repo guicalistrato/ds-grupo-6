@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<head>
-    <title>Boole</title>
-    <link rel="stylesheet" href="../static/index.css">
-</head>
-<body>
-    <div id="Sidebar" class="sidebar">
+<div id="Sidebar" class="sidebar">
         <div id="top-sidebar">
             <div class="sidebar-title-area">
                 <img src="{{ url_for('static', filename='images/logo-robo.png') }}" alt="Boole" style="height: 30px;">
                 <span id="top-sidebar-title">Sua área</span>
             </div>
             <div>
-                <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">☰</a>
+                <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu"></a>
             </div>
             
         </div>
@@ -35,7 +29,5 @@
                 </ul>
             </div>
         </div>
-        <div class="collapsible-wrapper"> 
     </div>
-    <script src="../static/js/sidebar.js"></script>
-</body>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>

@@ -80,6 +80,7 @@ def login_post():
         return {"redirect": "/"}, 200
     else:
         print('nao ok')
+        return {"erro": "Usuário ou senha inválidos"}, 401
 
 # página de criar conta
 @app.get('/criar-conta')

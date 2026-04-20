@@ -312,3 +312,28 @@
     }
   });
 })();
+
+// funções sidebar
+window.openSidebar = function() {
+    document.getElementById("Sidebar").style.width = "250px";
+    document.getElementById("chat-container").style.marginLeft = "250px";
+};
+window.closeSidebar = function() {
+    document.getElementById("Sidebar").style.width = "0";
+    document.getElementById("chat-container").style.marginLeft = "0";
+};
+
+// função listas colapsáveis
+document.addEventListener('DOMContentLoaded', () => {
+    const toggles = document.querySelectorAll('.toggle-button');
+
+    toggles.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content) {
+                content.classList.toggle('open');
+            }
+        }); 
+    });
+});
