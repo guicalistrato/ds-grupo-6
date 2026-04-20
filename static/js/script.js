@@ -1,14 +1,3 @@
-// funções sidebar
-window.openSidebar = function() {
-    document.getElementById("Sidebar").style.width = "250px";
-    document.getElementById("main-content").style.marginLeft = "250px";
-};
-
-window.closeSidebar = function() {
-    document.getElementById("Sidebar").style.width = "0";
-    document.getElementById("main-content").style.marginLeft = "0";
-};
-
 // função listas colapsáveis
 document.addEventListener('DOMContentLoaded', () => {
     const toggles = document.querySelectorAll('.toggle-button');

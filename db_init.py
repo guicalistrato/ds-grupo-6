@@ -17,7 +17,7 @@ def init_db():
 
     # Tabela de dúvidas e respostas
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS duvidas (
+        CREATE TABLE IF NOT EXISTS historico (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             usuario TEXT NOT NULL,
             pergunta TEXT NOT NULL,
