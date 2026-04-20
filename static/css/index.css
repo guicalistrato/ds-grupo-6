@@ -43,11 +43,13 @@ body {
   padding: 0 24px;
   display: flex;
   align-items: flex-start;
+  background-color: var(--bg);
+  box-shadow: var(--bg) 0px 5px 15px;
 }
 
 .menu-button {
   position: absolute;
-  top: 32px;
+  top: 16px;
   left: 32px;
   border: 0;
   background: transparent;
@@ -99,6 +101,9 @@ body {
   justify-content: center;
   align-items: flex-start;
   padding: 0 24px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 179, 190, 0.35) transparent;
 }
 
 .chat-messages {
@@ -109,16 +114,13 @@ body {
   flex-direction: column;
   gap: 14px;
   padding: 8px 4px 8px 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(15, 179, 190, 0.35) transparent;
 }
 
-.chat-messages::-webkit-scrollbar {
+.chat-main::-webkit-scrollbar {
   width: 8px;
 }
 
-.chat-messages::-webkit-scrollbar-thumb {
+.chat-main::-webkit-scrollbar-thumb {
   background: rgba(15, 179, 190, 0.35);
   border-radius: 10px;
 }
@@ -156,6 +158,8 @@ body {
   padding: 0 24px 30px;
   display: flex;
   justify-content: center;
+  background-color: var(--bg);
+  box-shadow: var(--bg) 0px -5px 15px;
 }
 
 #chat-form {
