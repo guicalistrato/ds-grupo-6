@@ -1,5 +1,5 @@
 :root {
-  --bg: #042b33;
+  --bg: #022028;
   --bg-2: #0d3a43;
   --accent: #0fb3be;
   --text: #f5f7f7;
@@ -20,7 +20,7 @@ body {
 }
 
 body {
-  font-family: "Courier New", Courier, monospace;
+  font-family: "JetBrains Mono", monospace;
   background: var(--bg);
   color: var(--text);
   overflow: hidden;
@@ -47,8 +47,8 @@ body {
 
 .menu-button {
   position: absolute;
-  top: 14px;
-  left: 16px;
+  top: 32px;
+  left: 32px;
   border: 0;
   background: transparent;
   color: var(--accent);
@@ -58,10 +58,12 @@ body {
   padding: 0;
   width: 34px;
   height: 34px;
+  opacity: 0.5;
+  transition: 150ms;
 }
 
 .menu-button:hover {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .header-content {
@@ -74,6 +76,7 @@ body {
   margin: 0 0 18px;
   font-size: clamp(2rem, 3.4vw, 3.15rem);
   font-weight: 700;
+  font-family: "Courier New", Courier, monospace;
   letter-spacing: 0.5px;
   color: var(--text);
 }
@@ -82,6 +85,7 @@ body {
   margin: 0;
   max-width: 560px;
   font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+  font-family: "Courier New", Courier, monospace;
   line-height: 1.25;
   font-weight: 700;
   color: var(--muted);
@@ -144,7 +148,7 @@ body {
 }
 
 .message-user .bubble {
-  background: rgba(15, 70, 78, 0.95);
+  background: #03151A;
 }
 
 .chat-input {
@@ -189,7 +193,7 @@ body {
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--accent);
+  color: var(--text);
   font-size: 0.86rem;
   font-family: inherit;
 }
@@ -201,8 +205,8 @@ body {
 
 .send-button {
   position: relative;
-  width: 34px;
-  height: 28px;
+  width: 38px;
+  height: 42px;
   border: 0;
   background: transparent;
   color: var(--accent);
@@ -211,10 +215,11 @@ body {
   place-items: center;
   font-size: 0;
   flex: 0 0 auto;
+  opacity: 0.5;
+  transition: 150ms;
 }
 
 .send-button::before {
-  content: "✈";
   font-size: 24px;
   line-height: 1;
   transform: rotate(14deg);
@@ -222,7 +227,7 @@ body {
 }
 
 .send-button:hover {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 @media (max-width: 700px) {
