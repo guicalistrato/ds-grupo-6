@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
@@ -46,12 +46,14 @@ def index_post():
 # página de login
 @app.get('/login')
 def login_get():
-    session.clear()
+    if session.get("user_id"):
+        return redirect("/")
     return render_template('login.html')
 
 @app.post('/login')
 def login_post():
-    session.clear()
+    if session.get("user_id"): #se o usuário já estiver logado, não faz sentido mostrar login ou criar conta
+        return {"redirect": "/"}, 200 
     # recebe os dados do javascript
     dados = request.get_json()
     
@@ -69,15 +71,16 @@ def login_post():
 
     if senha_db and check_password_hash(senha_db[0], senha):
         session["user_id"] = usuario
-        print('ok')
+        print('ok') #usado pra teste mas pode remover depois
         return {"redirect": "/"}, 200
     else:
-        print('nao ok')
+        return{"erro":"Usuário ou senha inválidos"},401
 
 # página de criar conta
 @app.get('/criar-conta')
 def criar_conta_get():
-    session.clear()
+    if session.get("user_id"): #se ele ja ta logado ele tem uma conta
+        return redirect("/")
     return render_template('criar_conta.html')
 
 @app.post('/criar-conta')
@@ -116,8 +119,13 @@ def criar_conta_post():
                 conn.commit()
         
         # redireciona para a tela de login
-        return {"redirect": "/login"}, 400
+        return {"redirect": "/login"}, 200
 
     # se as senhas forem diferentes, retorna para a parte de criar conta
     else:
         return {"redirect": "/criar-conta"}, 200
+        
+@app.get("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
