@@ -60,26 +60,6 @@
   margin: 0
 }
 
-
-.toggle-button {
-  background:transparent;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  width: 200px;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.arrow {
-  display: inline-block;
-  margin-right: 10px;
-  transition: transform 0.3s;
-}
-
 .content {
   max-height: 0;
   overflow: hidden;
@@ -94,14 +74,6 @@
   padding: 10px 20px;
   margin: 0;
   color: grey;
-}
-
-.content.open {
-  max-height: 200px; 
-}
-
-.toggle-button.active .arrow {
-  transform: rotate(90deg);
 }
 
 #nova-conversa{

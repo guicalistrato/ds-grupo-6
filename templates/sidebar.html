@@ -15,19 +15,12 @@
             Nova conversa
         </button>
 
-        <div class="collapsible-wrapper">
-            <button class="toggle-button">
-                <span class="arrow">▶</span> Conversas
-            </button>
-
-            <div class="content">
-                <ul>
-                    <!--ajustar isso aqui pra se tornar dinâmico-->
-                    <li>tópico1</li>
-                    <li>tópico2</li>
-                    <li>tópico3</li>
-                </ul>
-            </div>
+        <div class="content">
+            <ul id="conversation-list"> <!--estrutura básica do histórico dinâmico-->
+            {% for chat in conversations %}
+                <li><a href="/chat/{{ chat.id }}">{{ chat.title }}</a></li>
+            {% endfor %}
+            </ul>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
