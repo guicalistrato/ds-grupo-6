@@ -135,7 +135,8 @@ def obter_duvida_route(duvida_id):
 # página de login
 @app.get('/login')
 def login_get():
-    session.clear()
+    if session.get("user_id"):
+        return redirect("/")
     return render_template('login.html')
 
 @app.post('/login')
@@ -166,7 +167,8 @@ def login_post():
 # página de criar conta
 @app.get('/criar-conta')
 def criar_conta_get():
-    session.clear()
+    if session.get("user_id"): #se ele ja ta logado ele tem uma conta
+        return redirect("/")
     return render_template('criar_conta.html')
 
 @app.post('/criar-conta')
