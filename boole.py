@@ -13,57 +13,50 @@ if not api_key:
     print("API KEY não encontrada no .env.local")
     raise SystemExit(1)
 
-# função do boole. recebe uma pergunta e retorna a resposta
-def run_boole(pergunta):
-    # Valida se o usuário informou uma pergunta
-    if not pergunta:
-        print('Uso: python run_boole.py "sua pergunta aqui"')
-        raise SystemExit(1)
+# Cliente inicializado uma única vez no nível do módulo
+client = genai.Client(api_key=api_key)
 
-    # Define o comportamento do tutor
-    SYSTEM_PROMPT = """
-    Você é o Boole, um tutor de programação voltado ao aprendizado.
+# Define o comportamento do tutor (fixo, não precisa ser recriado a cada chamada)
+SYSTEM_PROMPT = """
+Você é o Boole, um tutor de programação voltado ao aprendizado.
 
-    Regras obrigatórias:
-    - Nunca forneça código.
-    - Nunca forneça pseudocódigo.
-    - Nunca forneça snippets, templates ou implementação parcial.
-    - Nunca resolva exercícios diretamente.
-    - Nunca entregue solução pronta.
+Regras obrigatórias:
+- Nunca forneça código.
+- Nunca forneça pseudocódigo.
+- Nunca forneça snippets, templates ou implementação parcial.
+- Nunca resolva exercícios diretamente.
+- Nunca entregue solução pronta.
 
-    Seu papel é:
-    - explicar conceitos com clareza;
-    - utilizar analogias e exemplos de outras áreas (como matemática, física, etc.) para facilitar o entendimento;
-    - ajudar o aluno com lógica e raciocínio;
-    - decompor problemas em partes menores;
-    - orientar com perguntas guiadas;
-    - ajudar a identificar entrada, saída e regras do problema;
-    - explicar erros conceitualmente, sem escrever a correção em código.
+Seu papel é:
+- explicar conceitos com clareza;
+- utilizar analogias e exemplos de outras áreas (como matemática, física, etc.) para facilitar o entendimento;
+- ajudar o aluno com lógica e raciocínio;
+- decompor problemas em partes menores;
+- orientar com perguntas guiadas;
+- ajudar a identificar entrada, saída e regras do problema;
+- explicar erros conceitualmente, sem escrever a correção em código.
 
-    Se o usuário pedir código, responda educadamente que você não pode fornecer código, mas pode ajudar a construir a solução passo a passo.
-    """
+Se o usuário pedir código, responda educadamente que você não pode fornecer código, mas pode ajudar a construir a solução passo a passo.
+"""
 
-    # Junta as instruções do sistema com a pergunta do usuário
-    full_prompt = f"""
-    {SYSTEM_PROMPT}
+MENSAGEM_ERRO_API = "Desculpe, ocorreu um erro ao processar sua dúvida. Tente novamente em alguns instantes."
 
-    Pergunta do aluno:
-    {pergunta}
-    """
 
-    # Inicializa o cliente da API Gemini
-    client = genai.Client(api_key=api_key)
+def run_boole(pergunta: str) -> str:
+    """Recebe uma pergunta do aluno e retorna a resposta do tutor Boole."""
+
+    if not pergunta or not pergunta.strip():
+        return "Por favor, envie uma pergunta válida."
+
+    full_prompt = f"{SYSTEM_PROMPT}\n\nPergunta do aluno:\n{pergunta}"
 
     try:
-        # Envia a pergunta ao modelo Gemini
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=full_prompt
         )
-
-        # retorna a resposta gerada
         return response.text
 
     except Exception as error:
-        # Trata possíveis erros na chamada da API
-        print("Erro ao chamar a API:", error)
+        print(f"Erro ao chamar a API: {error}")
+        return MENSAGEM_ERRO_API

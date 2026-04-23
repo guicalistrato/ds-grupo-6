@@ -1,19 +1,20 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
 from boole import run_boole
 
 from funcoes import login_required
+
 # configuração inicial
 app = Flask(__name__)
 
-# armazena os dados no servidor ao inves dos cookies
+# armazena os dados no servidor ao invés dos cookies
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# garante que usuario nao consiga acessar versoes antigas
+# garante que usuário não consiga acessar versões antigas
 @app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -21,7 +22,73 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-# pagina inicial
+# ============= BANCO DE DADOS =============
+
+def get_db():
+    # Retorna a conexão com o banco de dados para a requisição atual.
+    if 'db' not in g:
+        g.db = sqlite3.connect('dados.db')
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+@app.teardown_appcontext
+def close_db(e=None):
+    # Fecha a conexão com o banco de dados ao fim de cada requisição.
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+# ============= FUNÇÕES AUXILIARES =============
+
+def salvar_duvida(usuario, pergunta, resposta):
+    # Salva uma dúvida e sua resposta no banco de dados.
+    try:
+        db = get_db()
+        db.execute(
+            "INSERT INTO duvidas (usuario, pergunta, resposta) VALUES (?, ?, ?)",
+            (usuario, pergunta, resposta)
+        )
+        db.commit()
+        return True
+    except Exception as e:
+        print(f"Erro ao salvar dúvida: {e}")
+        return False
+
+def obter_historico(usuario):
+    # Obtém todas as dúvidas e respostas de um usuário, ordenadas por data decrescente.
+    try:
+        db = get_db()
+        cursor = db.execute(
+            """SELECT id, pergunta, resposta, data_criacao
+               FROM duvidas
+               WHERE usuario = ?
+               ORDER BY data_criacao DESC""",
+            (usuario,)
+        )
+        return [dict(row) for row in cursor.fetchall()]
+    except Exception as e:
+        print(f"Erro ao obter histórico: {e}")
+        return []
+
+def obter_duvida(usuario, duvida_id):
+    # Obtém uma dúvida específica de um usuário.
+    try:
+        db = get_db()
+        cursor = db.execute(
+            """SELECT id, pergunta, resposta, data_criacao
+               FROM duvidas
+               WHERE id = ? AND usuario = ?""",
+            (duvida_id, usuario)
+        )
+        resultado = cursor.fetchone()
+        return dict(resultado) if resultado else None
+    except Exception as e:
+        print(f"Erro ao obter dúvida: {e}")
+        return None
+
+# ============= ROTAS =============
+
+# página inicial
 @app.get("/")
 @login_required
 def index_get():
@@ -31,17 +98,39 @@ def index_get():
 @login_required
 def index_post():
     dados = request.get_json()
-    print(dados)
     if not dados:
         return {"erro": "Dados não recebidos"}, 400
-    
-    # recebe pergunta e roda função para boole gerar resposta
-    duvida = dados.get('duvida')
-    resposta_boole = run_boole(duvida)
-    print(resposta_boole)
 
-    # retorna o resultado em forma de json
+    duvida = dados.get('duvida', '').strip()
+    if not duvida:
+        return {"erro": "Dúvida não pode estar vazia"}, 400
+
+    resposta_boole = run_boole(duvida)
+
+    usuario = session.get("user_id")
+    salvar_duvida(usuario, duvida, resposta_boole)
+
     return {"resultado": resposta_boole}, 200
+
+# rota para obter histórico de dúvidas
+@app.get("/historico")
+@login_required
+def obter_historico_route():
+    usuario = session.get("user_id")
+    historico = obter_historico(usuario)
+    return {"duvidas": historico}, 200
+
+# rota para obter uma dúvida específica
+@app.get("/historico/<int:duvida_id>")
+@login_required
+def obter_duvida_route(duvida_id):
+    usuario = session.get("user_id")
+    duvida = obter_duvida(usuario, duvida_id)
+
+    if not duvida:
+        return {"erro": "Dúvida não encontrada"}, 404
+
+    return duvida, 200
 
 # página de login
 @app.get('/login')
@@ -52,29 +141,28 @@ def login_get():
 
 @app.post('/login')
 def login_post():
-    if session.get("user_id"): #se o usuário já estiver logado, não faz sentido mostrar login ou criar conta
-        return {"redirect": "/"}, 200 
-    # recebe os dados do javascript
+    session.clear()
     dados = request.get_json()
-    
+
     if not dados:
-        return {"erro": "Dados não recebidos"}, 400 
-        
+        return {"erro": "Dados não recebidos"}, 400
+
     usuario = dados.get('usuario')
     senha = dados.get('senha')
 
-    # checa se os dados batem
-    with sqlite3.connect('dados.db') as conn:
-        db = conn.cursor()
-        db.execute("SELECT senha FROM usuarios WHERE usuario = ?", (usuario,))
-        senha_db = db.fetchone()
+    if not usuario or not senha:
+        return {"erro": "Usuário e senha são obrigatórios"}, 400
 
-    if senha_db and check_password_hash(senha_db[0], senha):
+    db = get_db()
+    row = db.execute(
+        "SELECT senha FROM usuarios WHERE usuario = ?", (usuario,)
+    ).fetchone()
+
+    if row and check_password_hash(row["senha"], senha):
         session["user_id"] = usuario
-        print('ok') #usado pra teste mas pode remover depois
         return {"redirect": "/"}, 200
-    else:
-        return{"erro":"Usuário ou senha inválidos"},401
+
+    return {"erro": "Usuário ou senha incorretos"}, 401
 
 # página de criar conta
 @app.get('/criar-conta')
@@ -86,46 +174,36 @@ def criar_conta_get():
 @app.post('/criar-conta')
 def criar_conta_post():
     session.clear()
-    # recebe os dados pelo json
     dados = request.get_json()
-    
+
     if not dados:
-        return "Erro: Dados não recebidos", 400
-        
-    usuario = dados.get('usuario')
-    senha = dados.get('senha')
-    senha_confirma = dados.get('senha_confirma')
+        return {"erro": "Dados não recebidos"}, 400
 
-    print(f'DEBUG: usuario : {usuario}, senha : {senha}, senha2 : {senha_confirma}')
+    usuario = dados.get('usuario', '').strip()
+    senha = dados.get('senha', '')
+    senha_confirma = dados.get('senha_confirma', '')
 
-    # checa se as senhas sao iguais
-    if senha == senha_confirma:
-        hash = generate_password_hash(senha)
+    if not usuario or not senha:
+        return {"erro": "Usuário e senha são obrigatórios"}, 400
 
-        # guarda usuario e senha no banco de dados
-        with sqlite3.connect('dados.db') as conn:
-            db = conn.cursor()
+    if senha != senha_confirma:
+        return {"erro": "As senhas não coincidem"}, 400
 
-            # checa se o usuario ja existe
-            db.execute("SELECT usuario FROM usuarios WHERE usuario = ?", (usuario,))
-            usuario_existente = db.fetchone()
+    db = get_db()
+    usuario_existente = db.execute(
+        "SELECT usuario FROM usuarios WHERE usuario = ?", (usuario,)
+    ).fetchone()
 
-            # se sim, retorna o erro
-            if usuario_existente:
-                return {"erro": "Esse nome de usuário já está em uso."}, 400
+    if usuario_existente:
+        return {"erro": "Esse nome de usuário já está em uso."}, 400
 
-            else:
-                db.execute("INSERT INTO usuarios (usuario, senha) VALUES (?, ?);", (usuario, hash))
-                conn.commit()
-        
-        # redireciona para a tela de login
-        return {"redirect": "/login"}, 200
+    hash_senha = generate_password_hash(senha)
+    db.execute(
+        "INSERT INTO usuarios (usuario, senha) VALUES (?, ?)", (usuario, hash_senha)
+    )
+    db.commit()
 
-    # se as senhas forem diferentes, retorna para a parte de criar conta
-    else:
-        return {"redirect": "/criar-conta"}, 200
-        
-@app.get("/logout")
-def logout():
-    session.clear()
-    return redirect("/login")
+    return {"redirect": "/login"}, 200
+
+if __name__ == "__main__":
+    app.run(debug=True)
