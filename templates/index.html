@@ -17,16 +17,9 @@
 
   <div class="chat-container" id="chat-container" data-component="chat">
     <header class="chat-header" id="chat-header" data-section="header">
-      <button
-        type="button"
-        type="button" class="openbtn" 
-        onclick="openSidebar()"
-        id="menu-button"
-        data-action="toggle-menu"
-        aria-label="Abrir menu"
-      >
-        <img src="{{url_for('static', filename='images/menu_icon.png')}}" width="48px" height="36px">
-      </button>
+      <div>
+        <a href="javascript:void(0)" class="openbtn" onclick="openSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="openbtn"></a>
+      </div>
 
       <div class="header-content">
         <h1 class="chat-title" id="chat-title" data-role="chat-title">

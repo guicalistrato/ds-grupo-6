@@ -22,25 +22,12 @@
 
 
 .sidebar .closebtn {
-  font-size: 30px;
+  height: 36px;
   color: #022C2D;
-  text-decoration: none;
-
 }
 
 .sidebar .closebtn:hover {
   color: white;
-}
-
-.openbtn {
-  font-size: 30px;
-  cursor: pointer;
-  border: none;
-  background-color: transparent
-}
-
-.openbtn:hover {
-  color: grey;
 }
 
 .sidebar-title-area{
