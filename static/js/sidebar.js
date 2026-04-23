@@ -1,11 +1,10 @@
-// funções sidebar
-
+// função fechar sidebar
 window.closeSidebar = function() {
     document.getElementById("Sidebar").style.width = "0";
     document.getElementById("main-content").style.marginLeft = "0";
 };
 
-// função listas colapsáveis - em comentário porque na versão atual não é necessária
+// função listas colapsáveis - em comentário porque nao vai ser necessária na versão atual, mas pode ser util futuramente
 //document.addEventListener('DOMContentLoaded', () => {
 //    const toggles = document.querySelectorAll('.toggle-button');
 //
