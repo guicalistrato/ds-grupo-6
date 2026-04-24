@@ -48,12 +48,15 @@ def index_post():
     if not duvida:
         return {"erro": "Dúvida não pode estar vazia"}, 400
 
-    resposta_boole = run_boole(duvida)
+    resultados = run_boole(duvida)
+    resposta_boole = resultados[0]
+    titulo = resultados[1] 
+    print(titulo)
 
     usuario = session.get("user_id")
     salvar_duvida(usuario, duvida, resposta_boole)
 
-    return {"resultado": resposta_boole}, 200
+    return {"resultado": resposta_boole, "titulo": titulo}, 200
 
 # rota para obter histórico de dúvidas
 @app.get("/historico")

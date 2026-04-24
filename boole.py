@@ -49,13 +49,18 @@ def run_boole(pergunta: str) -> str:
         return "Por favor, envie uma pergunta válida."
 
     full_prompt = f"{SYSTEM_PROMPT}\n\nPergunta do aluno:\n{pergunta}"
+    prompt_titulo = f"Gere apenas um título simples, de poucas palavras, contendo apenas letras ou números, sobre a seguinte pergunta: {pergunta}"
 
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=full_prompt
         )
-        return response.text
+        titulo = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt_titulo
+        )
+        return (response.text, titulo.text)
 
     except Exception as error:
         print(f"Erro ao chamar a API: {error}")
