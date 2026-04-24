@@ -45,16 +45,16 @@
       <form id="chat-form" data-role="chat-form" action="#" method="post">
         <div class="input-wrapper">
           <label for="input-field" class="sr-only">Mensagem</label>
-          <input
-            type="text"
+          <textarea
             class="input-field"
             id="input-field"
             name="message"
             placeholder="No que posso te ajudar?"
             autocomplete="off"
             data-role="message-input"
+            rows="1"
             required
-          />
+          ></textarea>
           <button
             type="submit"
             class="send-button"
