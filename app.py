@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, session, g
+from flask import Flask, render_template, redirect, request, session, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
 from boole import run_boole
 
-from funcoes import login_required
+from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico
 
 # configuração inicial
 app = Flask(__name__)
@@ -23,14 +23,6 @@ def after_request(response):
     return response
 
 # ============= BANCO DE DADOS =============
-
-def get_db():
-    # Retorna a conexão com o banco de dados para a requisição atual.
-    if 'db' not in g:
-        g.db = sqlite3.connect('dados.db')
-        g.db.row_factory = sqlite3.Row
-    return g.db
-
 @app.teardown_appcontext
 def close_db(e=None):
     # Fecha a conexão com o banco de dados ao fim de cada requisição.
@@ -38,56 +30,7 @@ def close_db(e=None):
     if db is not None:
         db.close()
 
-# ============= FUNÇÕES AUXILIARES =============
-
-def salvar_duvida(usuario, pergunta, resposta):
-    # Salva uma dúvida e sua resposta no banco de dados.
-    try:
-        db = get_db()
-        db.execute(
-            "INSERT INTO duvidas (usuario, pergunta, resposta) VALUES (?, ?, ?)",
-            (usuario, pergunta, resposta)
-        )
-        db.commit()
-        return True
-    except Exception as e:
-        print(f"Erro ao salvar dúvida: {e}")
-        return False
-
-def obter_historico(usuario):
-    # Obtém todas as dúvidas e respostas de um usuário, ordenadas por data decrescente.
-    try:
-        db = get_db()
-        cursor = db.execute(
-            """SELECT id, pergunta, resposta, data_criacao
-               FROM duvidas
-               WHERE usuario = ?
-               ORDER BY data_criacao DESC""",
-            (usuario,)
-        )
-        return [dict(row) for row in cursor.fetchall()]
-    except Exception as e:
-        print(f"Erro ao obter histórico: {e}")
-        return []
-
-def obter_duvida(usuario, duvida_id):
-    # Obtém uma dúvida específica de um usuário.
-    try:
-        db = get_db()
-        cursor = db.execute(
-            """SELECT id, pergunta, resposta, data_criacao
-               FROM duvidas
-               WHERE id = ? AND usuario = ?""",
-            (duvida_id, usuario)
-        )
-        resultado = cursor.fetchone()
-        return dict(resultado) if resultado else None
-    except Exception as e:
-        print(f"Erro ao obter dúvida: {e}")
-        return None
-
 # ============= ROTAS =============
-
 # página inicial
 @app.get("/")
 @login_required
