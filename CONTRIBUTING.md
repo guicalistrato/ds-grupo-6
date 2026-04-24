@@ -404,9 +404,7 @@ Uma descrição clara do que foi implementado.
 
 ## Mudanças Técnicas
 
-- Endpoint adicionado: `POST /nova-rota`
-- Tabela modificada: `usuarios` (adicionada coluna X)
-- Dependência adicionada: `pacote-novo==1.0.0`
+Descrever em tópicos as mudanças técnicas implementadas nessa branch (ex.: feature de menu lateral com funcionalidades básicas em JS; correção de bug no comportamento do chat; polimento da UX)
 
 ## Checklist
 
@@ -427,6 +425,11 @@ Uma descrição clara do que foi implementado.
 ## Screenshots/Logs
 
 Se aplicável, inclua prints do teste.
+
+## Próximos passos
+
+Descrever em tópicos próximas ações ou pendências. 
+
 ```
 
 ### Revisão de Code
