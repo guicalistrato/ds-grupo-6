@@ -172,43 +172,49 @@ body {
 
 .input-wrapper {
   width: 100%;
-  height: 36px;
+  min-height: 36px;
+  max-height: 176px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 4px 6px 4px 14px;
+  padding: 6px 6px 6px 14px;
   border-radius: 7px;
   background: var(--input-bg);
   border: 1px solid var(--input-border);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .input-field {
   flex: 1;
+  width: 100%;
   min-width: 0;
+  min-height: 24px;
+  max-height: 140px;
   border: 0;
   outline: 0;
   background: transparent;
   color: var(--text);
   font-size: 0.86rem;
+  line-height: 1.35;
   font-family: inherit;
+  resize: none;
+  overflow-y: hidden;
+  padding: 0;
+  margin: 0;
 }
 
 .input-field::placeholder {
   color: rgba(15, 179, 190, 0.95);
   opacity: 1;
+}
+
+.input-field::-webkit-scrollbar {
+  width: 6px;
+}
+
+.input-field::-webkit-scrollbar-thumb {
+  background: rgba(15, 179, 190, 0.35);
+  border-radius: 8px;
 }
 
 .send-button {
@@ -260,4 +266,16 @@ body {
   #chat-form {
     width: 100%;
   }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

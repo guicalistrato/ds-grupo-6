@@ -10,7 +10,6 @@
 
   // aguarda o carregamento completo do DOM antes de executar o script
   document.addEventListener('DOMContentLoaded', function () {
-
     // referencias aos elementos principais do chat no DOM
     const chatContainer = document.getElementById('chat-container');
     const chatHeader = document.getElementById('chat-header');
@@ -20,14 +19,15 @@
     const inputField = document.getElementById('input-field');
     const sendButton = document.getElementById('send-button');
 
-    //garante que todos os elementos necessarios existem antes de continuar
+    // garante que todos os elementos necessarios existem antes de continuar
     if (!chatContainer || !chatHeader || !chatMessages || !chatForm || !inputField || !sendButton) {
       return;
     }
 
-    //inicialização da interface
+    // inicialização da interface
     injectDynamicStyles();
     clearExampleMessages();
+    autoResizeInput();
     inputField.focus();
 
     // estados de controle da aplicação
@@ -35,24 +35,27 @@
     let hasStarted = false;
     let messageCounter = 0;
 
-    // eventos de envio de mensagem (formulario e tecla enter
+    // eventos de envio de mensagem (formulario e tecla enter)
     chatForm.addEventListener('submit', function (event) {
       event.preventDefault();
       handleSubmit();
     });
 
     inputField.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') {
+      // Enter envia; Shift+Enter cria nova linha no textarea
+      if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         handleSubmit();
       }
     });
 
-    //função principal responsavel por enviar a mensagem do usuario
+    inputField.addEventListener('input', autoResizeInput);
+
+    // função principal responsavel por enviar a mensagem do usuario
     // e processar a resposta do bot
     async function handleSubmit() {
-      const userText = sanitizeInput(inputField.value); //sanitiza o texto digitado pelo usuario
-        
+      const userText = sanitizeInput(inputField.value); // sanitiza o texto digitado pelo usuario
+
       if (!userText || isSending) {
         return;
       }
@@ -64,6 +67,7 @@
 
       appendMessage('user', userText);
       inputField.value = '';
+      autoResizeInput();
 
       const typingMessage = appendTypingMessage();
       setSendingState(true);
@@ -84,7 +88,7 @@
       }
     }
 
-    //ativa mudanças visuais quando a primeira mensagem é enviada
+    // ativa mudanças visuais quando a primeira mensagem é enviada
     function activateConversationUI(firstQuestion) {
       chatContainer.classList.add('chat-started');
 
@@ -100,7 +104,7 @@
       }
     }
 
-    //cria e adiciona uma mensagem (usuario ou bot) no chat
+    // cria e adiciona uma mensagem (usuario ou bot) no chat
     function appendMessage(author, text) {
       messageCounter += 1;
 
@@ -121,7 +125,7 @@
       return message;
     }
 
-    //exibe animação de "bot digitando"
+    // exibe animação de "bot digitando"
     function appendTypingMessage() {
       const message = appendMessage('bot', '');
       const bubble = message.querySelector('.bubble');
@@ -144,7 +148,7 @@
       return message;
     }
 
-    //substitui a animação de digitação pelo texto final da resposta
+    // substitui a animação de digitação pelo texto final da resposta
     function replaceTypingWithText(typingMessage, text) {
       if (!typingMessage) {
         appendMessage('bot', text);
@@ -164,10 +168,10 @@
       scrollToBottom();
     }
 
-    //faz requisição ao backend para obter resposta da IA
+    // faz requisição ao backend para obter resposta da IA
     async function requestBotAnswer(question) {
-        //envia pergunta para o servidor
-        //espera resposta no formato JSON
+      // envia pergunta para o servidor
+      // espera resposta no formato JSON
       const response = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -193,7 +197,7 @@
       return String(data.resultado).trim();
     }
 
-    //controla estado de envio (loading/desabilitado)
+    // controla estado de envio (loading/desabilitado)
     function setSendingState(state) {
       isSending = state;
       inputField.disabled = state;
@@ -203,6 +207,7 @@
         sendButton.classList.add('is-loading');
       } else {
         sendButton.classList.remove('is-loading');
+        autoResizeInput();
         inputField.focus();
       }
     }
@@ -215,12 +220,23 @@
       });
     }
 
-    //remove espaços extras e normaliza entrada do usuario
+    // auto-ajusta altura do textarea ate o max-height e ativa scroll interno
+    function autoResizeInput() {
+      inputField.style.height = 'auto';
+
+      const maxHeight = parseFloat(window.getComputedStyle(inputField).maxHeight) || 140;
+      const nextHeight = Math.min(inputField.scrollHeight, maxHeight);
+
+      inputField.style.height = String(nextHeight) + 'px';
+      inputField.style.overflowY = inputField.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }
+
+    // remove espaços extras e normaliza entrada do usuario
     function sanitizeInput(value) {
       return String(value || '').replace(/\s+/g, ' ').trim();
     }
 
-    //remove mensagens de exemplo iniciais do chat
+    // remove mensagens de exemplo iniciais do chat
     function clearExampleMessages() {
       const sampleMessages = chatMessages.querySelectorAll('.message');
       if (sampleMessages.length > 0) {
@@ -228,7 +244,7 @@
       }
     }
 
-    // Gera um rotulo/resumo da duvida para exibir no topo
+    // gera um rotulo/resumo da duvida para exibir no topo
     function buildTopicLabel(question) {
       const cleaned = sanitizeInput(question).toLowerCase();
 
@@ -313,8 +329,15 @@
   });
 })();
 
-// função fechar sidebar
-window.openSidebar = function() {
-    document.getElementById("Sidebar").style.width = "250px";
-    document.getElementById("chat-container").style.marginLeft = "250px";
+// função abrir sidebar
+window.openSidebar = function () {
+  const sidebar = document.getElementById('Sidebar');
+  const container = document.getElementById('chat-container');
+
+  if (!sidebar || !container) {
+    return;
+  }
+
+  sidebar.style.width = '250px';
+  container.style.marginLeft = '250px';
 };
