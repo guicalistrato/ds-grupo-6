@@ -149,5 +149,12 @@ def criar_conta_post():
 
     return {"redirect": "/login"}, 200
 
+# logout
+@app.route("/logout")
+def logout():
+    session.clear()
+
+    return redirect("/")
+
 if __name__ == "__main__":
     app.run(debug=True)
