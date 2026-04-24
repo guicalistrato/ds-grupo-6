@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <title>Boole - Login</title>
-    <link rel="stylesheet" href="../static/css/login.css">
+    <link rel="stylesheet" href="{{url_for ('static', filename='style/login.css')}}">
 </head>
 <body>
     <div id="bloco-central">
@@ -26,7 +26,7 @@
         </div>
 
     </div>
-    <script src="{{url_for('static', filename='js/login.js')}}"></script>
+    <script src="{{url_for('static', filename='behavior/login.js')}}"></script>
 
 </body>
 </html>
