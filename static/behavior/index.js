@@ -1,0 +1,343 @@
+// script responsável por controlar toda a logica da area de chat:
+// - captura eventos do usuario (envio de mensagem)
+// - renderiza mensagens na tela
+// - faz requisição ao backend
+// - controla estados como "digitando" e "carregando"
+
+// IIFE para evitar poluição do escopo global
+(function () {
+  'use strict';
+
+  // aguarda o carregamento completo do DOM antes de executar o script
+  document.addEventListener('DOMContentLoaded', function () {
+    // referencias aos elementos principais do chat no DOM
+    const chatContainer = document.getElementById('chat-container');
+    const chatHeader = document.getElementById('chat-header');
+    const headerContent = chatHeader ? chatHeader.querySelector('.header-content') : null;
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const inputField = document.getElementById('input-field');
+    const sendButton = document.getElementById('send-button');
+
+    // garante que todos os elementos necessarios existem antes de continuar
+    if (!chatContainer || !chatHeader || !chatMessages || !chatForm || !inputField || !sendButton) {
+      return;
+    }
+
+    // inicialização da interface
+    injectDynamicStyles();
+    clearExampleMessages();
+    autoResizeInput();
+    inputField.focus();
+
+    // estados de controle da aplicação
+    let isSending = false;
+    let hasStarted = false;
+    let messageCounter = 0;
+
+    // eventos de envio de mensagem (formulario e tecla enter)
+    chatForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      handleSubmit();
+    });
+
+    inputField.addEventListener('keydown', function (event) {
+      // Enter envia; Shift+Enter cria nova linha no textarea
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handleSubmit();
+      }
+    });
+
+    inputField.addEventListener('input', autoResizeInput);
+
+    // função principal responsavel por enviar a mensagem do usuario
+    // e processar a resposta do bot
+    async function handleSubmit() {
+      const userText = sanitizeInput(inputField.value); // sanitiza o texto digitado pelo usuario
+
+      if (!userText || isSending) {
+        return;
+      }
+
+      if (!hasStarted) {
+        hasStarted = true;
+        activateConversationUI(userText);
+      }
+
+      appendMessage('user', userText);
+      inputField.value = '';
+      autoResizeInput();
+
+      const typingMessage = appendTypingMessage();
+      setSendingState(true);
+
+      try {
+        const botAnswer = await requestBotAnswer(userText);
+        replaceTypingWithText(
+          typingMessage,
+          botAnswer || 'Nao consegui gerar uma resposta agora. Tente novamente.'
+        );
+      } catch (error) {
+        replaceTypingWithText(
+          typingMessage,
+          'Tive um erro ao buscar a resposta. Tente de novo em instantes.'
+        );
+      } finally {
+        setSendingState(false);
+      }
+    }
+
+    // ativa mudanças visuais quando a primeira mensagem é enviada
+    function activateConversationUI(firstQuestion) {
+      chatContainer.classList.add('chat-started');
+
+      if (headerContent) {
+        headerContent.style.display = 'none';
+      }
+
+      if (!chatHeader.querySelector('.topic-pill')) {
+        const topicPill = document.createElement('div');
+        topicPill.className = 'topic-pill';
+        topicPill.textContent = buildTopicLabel(firstQuestion);
+        chatHeader.appendChild(topicPill);
+      }
+    }
+
+    // cria e adiciona uma mensagem (usuario ou bot) no chat
+    function appendMessage(author, text) {
+      messageCounter += 1;
+
+      const message = document.createElement('div');
+      message.className = 'message ' + (author === 'user' ? 'message-user' : 'message-bot');
+      message.setAttribute('data-author', author);
+      message.setAttribute('data-message-id', String(messageCounter));
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+      bubble.style.whiteSpace = 'pre-wrap';
+
+      message.appendChild(bubble);
+      chatMessages.appendChild(message);
+      scrollToBottom();
+
+      return message;
+    }
+
+    // exibe animação de "bot digitando"
+    function appendTypingMessage() {
+      const message = appendMessage('bot', '');
+      const bubble = message.querySelector('.bubble');
+
+      if (!bubble) {
+        return message;
+      }
+
+      bubble.classList.add('typing-bubble');
+      bubble.setAttribute('aria-label', 'Boole esta digitando');
+      bubble.textContent = '';
+
+      for (let i = 0; i < 3; i += 1) {
+        const dot = document.createElement('span');
+        dot.className = 'typing-dot';
+        dot.style.animationDelay = String(i * 0.15) + 's';
+        bubble.appendChild(dot);
+      }
+
+      return message;
+    }
+
+    // substitui a animação de digitação pelo texto final da resposta
+    function replaceTypingWithText(typingMessage, text) {
+      if (!typingMessage) {
+        appendMessage('bot', text);
+        return;
+      }
+
+      const bubble = typingMessage.querySelector('.bubble');
+
+      if (!bubble) {
+        appendMessage('bot', text);
+        return;
+      }
+
+      bubble.classList.remove('typing-bubble');
+      bubble.textContent = text;
+      bubble.style.whiteSpace = 'pre-wrap';
+      scrollToBottom();
+    }
+
+    // faz requisição ao backend para obter resposta da IA
+    async function requestBotAnswer(question) {
+      // envia pergunta para o servidor
+      // espera resposta no formato JSON
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ duvida: question })
+      });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (_ignored) {
+        data = null;
+      }
+
+      if (!response.ok) {
+        const errorMessage = data && data.erro ? data.erro : 'Falha na requisicao';
+        throw new Error(errorMessage);
+      }
+
+      if (!data || !data.resultado) {
+        throw new Error('Resposta vazia');
+      }
+
+      return String(data.resultado).trim();
+    }
+
+    // controla estado de envio (loading/desabilitado)
+    function setSendingState(state) {
+      isSending = state;
+      inputField.disabled = state;
+      sendButton.disabled = state;
+
+      if (state) {
+        sendButton.classList.add('is-loading');
+      } else {
+        sendButton.classList.remove('is-loading');
+        autoResizeInput();
+        inputField.focus();
+      }
+    }
+
+    // mantem o scroll sempre no final do chat
+    function scrollToBottom() {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      window.requestAnimationFrame(function () {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    }
+
+    // auto-ajusta altura do textarea ate o max-height e ativa scroll interno
+    function autoResizeInput() {
+      inputField.style.height = 'auto';
+
+      const maxHeight = parseFloat(window.getComputedStyle(inputField).maxHeight) || 140;
+      const nextHeight = Math.min(inputField.scrollHeight, maxHeight);
+
+      inputField.style.height = String(nextHeight) + 'px';
+      inputField.style.overflowY = inputField.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }
+
+    // remove espaços extras e normaliza entrada do usuario
+    function sanitizeInput(value) {
+      return String(value || '').replace(/\s+/g, ' ').trim();
+    }
+
+    // remove mensagens de exemplo iniciais do chat
+    function clearExampleMessages() {
+      const sampleMessages = chatMessages.querySelectorAll('.message');
+      if (sampleMessages.length > 0) {
+        chatMessages.innerHTML = '';
+      }
+    }
+
+    // gera um rotulo/resumo da duvida para exibir no topo
+    function buildTopicLabel(question) {
+      const cleaned = sanitizeInput(question).toLowerCase();
+
+      if (/recurs/i.test(cleaned)) {
+        return 'Duvida sobre funcoes recursivas';
+      }
+
+      const sobreMatch = cleaned.match(/sobre\s+(.+)/i);
+      if (sobreMatch && sobreMatch[1]) {
+        return capAndTrim('Duvida sobre ' + sobreMatch[1]);
+      }
+
+      const firstWords = cleaned.split(' ').slice(0, 4).join(' ');
+      return capAndTrim('Duvida sobre ' + firstWords);
+    }
+
+    // capitaliza e limita o tamanho do texto
+    function capAndTrim(text) {
+      const safe = String(text || '').trim();
+
+      if (!safe) {
+        return 'Nova duvida';
+      }
+
+      const normalized = safe.charAt(0).toUpperCase() + safe.slice(1);
+
+      if (normalized.length <= 40) {
+        return normalized;
+      }
+
+      return normalized.slice(0, 39).trim() + '...';
+    }
+
+    // injeta estilos CSS dinamicamente via JavaScript
+    function injectDynamicStyles() {
+      if (document.getElementById('chat-js-dynamic-style')) {
+        return;
+      }
+
+      const style = document.createElement('style');
+      style.id = 'chat-js-dynamic-style';
+      style.textContent = [
+        '.chat-container.chat-started .chat-header { min-height: 72px; }',
+        '.chat-container.chat-started .chat-main { padding-top: 8px; }',
+        '.topic-pill {',
+        '  position: absolute;',
+        '  top: 24px;',
+        '  left: 50%;',
+        '  transform: translateX(-50%);',
+        '  max-width: min(70vw, 380px);',
+        '  padding: 8px 14px;',
+        '  border-radius: 8px;',
+        '  background: rgba(15, 179, 190, 0.18);',
+        '  border: 1px solid rgba(15, 179, 190, 0.26);',
+        '  color: #71dbe3;',
+        '  font-size: 0.78rem;',
+        '  font-weight: 700;',
+        '  white-space: nowrap;',
+        '  overflow: hidden;',
+        '  text-overflow: ellipsis;',
+        '}',
+        '.typing-bubble { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; }',
+        '.typing-dot {',
+        '  width: 7px;',
+        '  height: 7px;',
+        '  border-radius: 50%;',
+        '  background: rgba(230, 248, 248, 0.95);',
+        '  animation: chatTyping 1s infinite ease-in-out;',
+        '}',
+        '.send-button.is-loading { opacity: 0.55; pointer-events: none; }',
+        '@keyframes chatTyping {',
+        '  0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }',
+        '  40% { transform: translateY(-3px); opacity: 1; }',
+        '}',
+        '@media (max-width: 700px) {',
+        '  .topic-pill { max-width: 82vw; font-size: 0.72rem; }',
+        '}'
+      ].join('');
+
+      document.head.appendChild(style);
+    }
+  });
+})();
+
+// função abrir sidebar
+window.openSidebar = function () {
+  const sidebar = document.getElementById('Sidebar');
+  const container = document.getElementById('chat-container');
+
+  if (!sidebar || !container) {
+    return;
+  }
+
+  sidebar.style.width = '250px';
+  container.style.marginLeft = '250px';
+};

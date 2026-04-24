@@ -161,8 +161,9 @@ def login_post():
     if row and check_password_hash(row["senha"], senha):
         session["user_id"] = usuario
         return {"redirect": "/"}, 200
-
-    return {"erro": "Usuário ou senha incorretos"}, 401
+    else:
+        print('nao ok')
+        return {"erro": "Usuário ou senha inválidos"}, 401
 
 # página de criar conta
 @app.get('/criar-conta')

@@ -1,0 +1,90 @@
+.sidebar {
+  height: 100%;
+  width: 0; 
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: #164B4D;
+  overflow-x: hidden;
+  transition: 0.5s;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar li {
+  padding: 8px 8px 8px 8px;
+  text-decoration: none;
+  font-size: 16px;
+  color: #fff;
+  display: block;
+  transition: 0.5s;
+}
+
+
+.sidebar .closebtn {
+  height: 36px;
+  color: #022C2D;
+}
+
+.sidebar .closebtn:hover {
+  color: white;
+}
+
+.sidebar-title-area{
+  display: flex;         
+  align-items: center;    
+  gap: 10px; ;            
+}
+
+#main-content {
+  transition: margin-left .5s;
+  padding: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#top-sidebar{
+  display: flex;        
+  align-items: center;    
+  gap: 10px;             
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+#top-sidebar-title{
+  font-weight: bold;
+  color: #fff;
+  font-size: 20px;
+  margin: 0
+}
+
+.content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background: transparent;
+  width: 200px;
+  color: grey;
+}
+
+.content ul {
+  list-style: none;
+  padding: 10px 20px;
+  margin: 0;
+  color: grey;
+}
+
+#nova-conversa{
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  gap: 7px;
+  font-size: 15px;
+  color: #fff;
+  border: none;
+  padding: 10px;
+}
