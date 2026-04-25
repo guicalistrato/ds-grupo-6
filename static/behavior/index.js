@@ -115,7 +115,7 @@
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
-      bubble.textContent = text;
+      bubble.innerHTML = marked.parse(text);
       bubble.style.whiteSpace = 'pre-wrap';
 
       message.appendChild(bubble);
@@ -136,7 +136,7 @@
 
       bubble.classList.add('typing-bubble');
       bubble.setAttribute('aria-label', 'Boole esta digitando');
-      bubble.textContent = '';
+      bubble.innerHTML = '';
 
       for (let i = 0; i < 3; i += 1) {
         const dot = document.createElement('span');
@@ -163,7 +163,7 @@
       }
 
       bubble.classList.remove('typing-bubble');
-      bubble.textContent = text;
+      bubble.innerHTML = marked.parse(text);
       bubble.style.whiteSpace = 'pre-wrap';
       scrollToBottom();
     }
@@ -333,11 +333,13 @@
 window.openSidebar = function () {
   const sidebar = document.getElementById('Sidebar');
   const container = document.getElementById('chat-container');
+  const menu_button = document.getElementById('openbtn');
 
   if (!sidebar || !container) {
     return;
   }
 
+  menu_button.style.visibility = 'hidden';
   sidebar.style.width = '250px';
-  container.style.marginLeft = '250px';
+  /*container.style.marginLeft = '250px';*/
 };
