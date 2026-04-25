@@ -4,7 +4,7 @@ from flask_session import Session
 import sqlite3
 from boole import run_boole
 
-from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico
+from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id
 
 # configuração inicial
 app = Flask(__name__)
@@ -53,8 +53,11 @@ def index_post():
     titulo = resultados[1] 
     print(titulo)
 
+    # cria um id pro chat
+    id_chat = criar_id()
+
     usuario = session.get("user_id")
-    salvar_duvida(usuario, duvida, resposta_boole)
+    salvar_duvida(usuario, duvida, resposta_boole, titulo, id_chat)
 
     return {"resultado": resposta_boole, "titulo": titulo}, 200
 

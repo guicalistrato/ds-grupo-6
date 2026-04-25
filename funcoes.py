@@ -23,13 +23,13 @@ def get_db():
         g.db.row_factory = sqlite3.Row
     return g.db
 
-def salvar_duvida(usuario, pergunta, resposta, nome_chat):
+def salvar_duvida(usuario, pergunta, resposta, nome_chat, id_chat):
     # Salva uma dúvida e sua resposta no banco de dados.
     try:
         db = get_db()
         db.execute(
-            "INSERT INTO duvidas (usuario, pergunta, resposta, nome_chat) VALUES (?, ?, ?, ?)",
-            (usuario, pergunta, resposta, nome_chat)
+            "INSERT INTO duvidas (usuario, pergunta, resposta, nome_chat, id_chat) VALUES (?, ?, ?, ?, ?)",
+            (usuario, pergunta, resposta, nome_chat, id_chat)
         )
         db.commit()
         return True
