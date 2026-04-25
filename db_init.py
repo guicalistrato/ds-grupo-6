@@ -21,6 +21,8 @@ def init_db():
                 usuario TEXT NOT NULL,
                 pergunta TEXT NOT NULL,
                 resposta TEXT NOT NULL,
+                nome_chat TEXT NOT NULL,
+                id_chat TEXT NOT NULL,
                 data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (usuario) REFERENCES usuarios(usuario)
             )
