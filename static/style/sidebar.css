@@ -1,17 +1,14 @@
-* {
-  font-family: "JetBrains Mono", monospace;
-}
 .sidebar {
   height: 100%;
   width: 0; 
+  position: fixed;
   z-index: 1000;
   top: 0;
   left: 0;
-  bottom: 0;
   background-color: #164B4D;
   overflow-x: hidden;
   transition: 0.5s;
-  font-family: "JetBrains Mono", monospace;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .sidebar li {
@@ -42,7 +39,7 @@
 #main-content {
   transition: margin-left .5s;
   padding: 16px;
-  font-family: "JetBrains Mono", monospace;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #top-sidebar{
@@ -83,7 +80,7 @@
   display: flex;
   align-items: center;
   background-color: transparent;
-  font-family: "JetBrains Mono", monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   gap: 7px;
   font-size: 15px;

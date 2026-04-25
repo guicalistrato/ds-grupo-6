@@ -15,10 +15,8 @@
 html,
 body {
   width: 100%;
-  max-width: 100%;
   height: 100%;
   margin: 0;
-  overflow-x: hidden;
 }
 
 body {
@@ -28,20 +26,14 @@ body {
 
 }
 
-.site-wrapper{
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-}
-
 .chat-container {
+  position: relative;
   width: 100vw;
   height: 100vh;
   background: var(--bg);
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  transition: width 150ms, margin-left 150ms;
 }
 
 .chat-header {
@@ -55,7 +47,7 @@ body {
   box-shadow: var(--bg) 0px 5px 15px;
 }
 
-.menu-button {
+.openbtn {
   position: absolute;
   top: 24px;
   left: 24px;
@@ -69,7 +61,7 @@ body {
   width: 34px;
   height: 34px;
   opacity: 0.5;
-  transition: opacity 150ms;
+  transition: 150ms;
   height: 36px;
 }
 
@@ -104,17 +96,13 @@ body {
 }
 
 .chat-main {
-  max-width: 100%;
-  min-width: 0;
-  display: flex;
-  flex-grow: 1;
-  flex-shrink: 1;
+  flex: 1;
   min-height: 0;
+  display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 0 24px;
   overflow-y: auto;
-  overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(15, 179, 190, 0.35) transparent;
 }
@@ -154,9 +142,7 @@ body {
 
 .bubble {
   max-width: min(560px, 85%);
-  display: flex;
-  flex-wrap: wrap;
-  padding: 2px 16px 2px 16px;
+  padding: 14px 16px;
   border-radius: 14px;
   background: rgba(11, 56, 64, 0.92);
   color: var(--text);
@@ -177,7 +163,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: var(--bg);
-  box-shadow: var(--bg) 0px -7px 15px;
+  box-shadow: var(--bg) 0px -5px 15px;
 }
 
 #chat-form {
@@ -186,12 +172,12 @@ body {
 
 .input-wrapper {
   width: 100%;
-  min-height: 32px;
+  min-height: 36px;
   max-height: 176px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 2px 6px 2px 14px;
+  padding: 6px 6px 6px 14px;
   border-radius: 7px;
   background: var(--input-bg);
   border: 1px solid var(--input-border);
@@ -213,7 +199,7 @@ body {
   font-family: inherit;
   resize: none;
   overflow-y: hidden;
-  padding-top: 2px;
+  padding: 0;
   margin: 0;
 }
 
