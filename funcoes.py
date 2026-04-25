@@ -37,6 +37,16 @@ def salvar_duvida(usuario, pergunta, resposta, nome_chat, id_chat):
         print(f"Erro ao salvar dúvida: {e}")
         return False
 
+# essa função recebe as duvidas de um mesmo chat
+def receber_duvidas_chat(id):
+    db = get_db()
+    cursor = db.execute(
+        "SELECT * FROM duvidas WHERE id_chat = ?", (id,) 
+    )
+    resultado = cursor.fetchall()
+    resultado = [dict(linha) for linha in resultado]
+    return resultado
+
 def obter_historico(usuario):
     # Obtém todas as dúvidas e respostas de um usuário, ordenadas por data decrescente.
     try:

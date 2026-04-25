@@ -4,7 +4,7 @@ from flask_session import Session
 import sqlite3
 from boole import run_boole
 
-from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id
+from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id, receber_duvidas_chat
 
 # configuração inicial
 app = Flask(__name__)
@@ -44,20 +44,35 @@ def index_post():
     if not dados:
         return {"erro": "Dados não recebidos"}, 400
 
+    num = dados.get('num') # número de perguntas já feitas
     duvida = dados.get('duvida', '').strip()
     if not duvida:
         return {"erro": "Dúvida não pode estar vazia"}, 400
 
-    resultados = run_boole(duvida)
+    resultados = run_boole(duvida, num)
     resposta_boole = resultados[0]
     titulo = resultados[1] 
-    print(titulo)
 
-    # cria um id pro chat
-    id_chat = criar_id()
+    # caso seja a primeira mensagem, cria um id pro chat
+    if num <= 2:
+        id_chat = criar_id()
+
+    else:
+        # caso contrario, pega ultimo id
+        db = get_db()
+        cursor = db.execute(
+            "SELECT id_chat FROM duvidas WHERE id = (SELECT MAX(id) FROM duvidas);"
+        )
+        resultado = cursor.fetchone()
+        id_chat_dict = dict(resultado)
+        id_chat = id_chat_dict['id_chat']
 
     usuario = session.get("user_id")
     salvar_duvida(usuario, duvida, resposta_boole, titulo, id_chat)
+
+    # recebe duvidas do chat
+    duvida = receber_duvidas_chat(id_chat)
+    print(duvida)
 
     return {"resultado": resposta_boole, "titulo": titulo}, 200
 
