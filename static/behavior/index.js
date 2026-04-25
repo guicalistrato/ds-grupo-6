@@ -206,7 +206,13 @@
       
       // atualiza o titulo do chat
       const titulo = String(data.titulo).trim();
-      atualizarTituloConversa(titulo);
+
+      // atualizar titulo caso seja primeira mensagem
+      console.log(messageCounter)
+      if (messageCounter < 3) {
+        atualizarTituloConversa(titulo);
+      }
+      
       return String(data.resultado).trim();
     }
 
