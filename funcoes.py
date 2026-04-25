@@ -1,6 +1,8 @@
 from functools import wraps
 from flask import redirect, render_template, session, g
 import sqlite3
+from random import randint, seed
+import time
 
 # este arquivo foi criado para armazenar funções auxiliares
 
@@ -21,13 +23,13 @@ def get_db():
         g.db.row_factory = sqlite3.Row
     return g.db
 
-def salvar_duvida(usuario, pergunta, resposta):
+def salvar_duvida(usuario, pergunta, resposta, nome_chat):
     # Salva uma dúvida e sua resposta no banco de dados.
     try:
         db = get_db()
         db.execute(
-            "INSERT INTO duvidas (usuario, pergunta, resposta) VALUES (?, ?, ?)",
-            (usuario, pergunta, resposta)
+            "INSERT INTO duvidas (usuario, pergunta, resposta, nome_chat) VALUES (?, ?, ?, ?)",
+            (usuario, pergunta, resposta, nome_chat)
         )
         db.commit()
         return True
@@ -66,3 +68,22 @@ def obter_duvida(usuario, duvida_id):
     except Exception as e:
         print(f"Erro ao obter dúvida: {e}")
         return None
+
+# cria um id único
+def criar_id():
+    timeseed = int(time.time())
+    seed(timeseed)
+
+    codigo = ''
+    for i in range(20):
+        num = chr(randint(48, 57)) # intervalo dos numeros em ascii
+        letra = chr(randint(65, 90)) # intervalo das letras maiusculas em ascii
+        prob = randint(1, 2)
+
+        # seleciona um numero ou letra aleatorio para adicionar ao codigo
+        if prob == 1:
+            codigo += num
+        else:
+            codigo += letra
+
+    return(codigo)
