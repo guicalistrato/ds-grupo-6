@@ -2,7 +2,7 @@
 window.closeSidebar = function() {
     document.getElementById("Sidebar").style.width = "0";
     document.getElementById("chat-container").style.marginLeft = "0";
-    document.getElementById("menu-button").style.visibility = 'visible';
+    document.getElementById("openbtn").style.visibility = 'visible';
 };
 
 // função listas colapsáveis - em comentário porque nao vai ser necessária na versão atual, mas pode ser util futuramente

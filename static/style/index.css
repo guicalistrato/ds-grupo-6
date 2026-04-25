@@ -55,7 +55,7 @@ body {
   box-shadow: var(--bg) 0px 5px 15px;
 }
 
-.menu-button {
+.openbtn {
   position: absolute;
   top: 24px;
   left: 24px;
@@ -73,7 +73,7 @@ body {
   height: 36px;
 }
 
-.menu-button:hover {
+.openbtn:hover {
   opacity: 1;
 }
 

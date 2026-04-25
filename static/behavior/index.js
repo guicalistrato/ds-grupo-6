@@ -333,7 +333,7 @@
 window.openSidebar = function () {
   const sidebar = document.getElementById('Sidebar');
   const container = document.getElementById('chat-container');
-  const menu_button = document.getElementById('menu-button');
+  const menu_button = document.getElementById('openbtn');
 
   if (!sidebar || !container) {
     return;
