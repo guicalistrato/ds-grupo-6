@@ -42,7 +42,7 @@ Se o usuário pedir código, responda educadamente que você não pode fornecer 
 MENSAGEM_ERRO_API = "Desculpe, ocorreu um erro ao processar sua dúvida. Tente novamente em alguns instantes."
 
 
-def run_boole(pergunta: str) -> str:
+def run_boole(pergunta: str, num) -> str:
     """Recebe uma pergunta do aluno e retorna a resposta do tutor Boole."""
 
     if not pergunta or not pergunta.strip():
@@ -56,11 +56,16 @@ def run_boole(pergunta: str) -> str:
             model="gemini-2.5-flash",
             contents=full_prompt
         )
-        titulo = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt_titulo
-        )
-        return (response.text, titulo.text)
+        # se for a primeira mensagem, gera um título
+        titulo_final = ''
+        if num <= 2:
+            titulo = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt_titulo
+            )
+
+            titulo_final = titulo.text
+        return (response.text, titulo_final)
 
     except Exception as error:
         print(f"Erro ao chamar a API: {error}")
