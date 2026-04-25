@@ -13,12 +13,13 @@
 </head>
 
 <body>
-  {% include "sidebar.html" %}
+  <div class = "site-wrapper" id="site-wrapper">
+    {% include "sidebar.html" %}
+    <div class="chat-container" id="chat-container" data-component="chat">
 
-  <div class="chat-container" id="chat-container" data-component="chat">
-    <header class="chat-header" id="chat-header" data-section="header">
+      <header class="chat-header" id="chat-header" data-section="header">
       <div>
-        <a href="javascript:void(0)" class="openbtn" onclick="openSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="openbtn"></a>
+        <a href="javascript:void(0)" id="menu-button" onclick="openSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="menu-button"></a>
       </div>
 
       <div class="header-content">
@@ -29,9 +30,10 @@
           Eu sou o Boole, o seu tutor de programação. Me pergunte sobre alguma linguagem, uma dúvida ou código seu.
         </p>
       </div>
-    </header>
+      </header>
 
-    <main class="chat-main" id="chat-main" data-section="main">
+
+      <main class="chat-main" id="chat-main" data-section="main">
       <section
         class="chat-messages"
         id="chat-messages"
@@ -39,9 +41,9 @@
         aria-live="polite"
         aria-label="Mensagens do chat"
       ></section>
-    </main>
+      </main>
 
-    <footer class="chat-input" id="chat-input" data-section="input">
+      <footer class="chat-input" id="chat-input" data-section="input">
       <form id="chat-form" data-role="chat-form" action="#" method="post">
         <div class="input-wrapper">
           <label for="input-field" class="sr-only">Mensagem</label>
@@ -66,9 +68,12 @@
           </button>
         </div>
       </form>
-    </footer>
+      </footer>
+    </div>
   </div>
 
   <script defer src="{{url_for ('static', filename='behavior/index.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 </body>
 </html>
