@@ -13,12 +13,38 @@
 </head>
 
 <body>
-  {% include "sidebar.html" %}
+  <div class = "site-wrapper" id="site-wrapper">
+    <aside id="Sidebar" class="sidebar">
+        <div id="top-sidebar">
+            <div class="sidebar-title-area">
+                <img src="{{ url_for('static', filename='images/logo-robo.png') }}" alt="Boole" style="height: 30px;">
+                <span id="top-sidebar-title">Sua área</span>
+            </div>
+            <div>
+                <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="closebtn"></a>
+            </div>
+            
+        </div>
 
-  <div class="chat-container" id="chat-container" data-component="chat">
-    <header class="chat-header" id="chat-header" data-section="header">
+        <button id="nova-conversa">
+            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
+            Nova conversa
+        </button>
+
+        <div class="content">
+            <ul id="conversation-list"> <!--estrutura básica do histórico dinâmico-->
+            {% for chat in conversations %}
+                <li><a href="/chat/{{ chat.id }}">{{ chat.title }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+    </aside>
+
+    <div class="chat-container" id="chat-container" data-component="chat">
+
+      <header class="chat-header" id="chat-header" data-section="header">
       <div>
-        <a href="javascript:void(0)" class="openbtn" onclick="openSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="openbtn"></a>
+        <a href="javascript:void(0)" id="menu-button" onclick="openSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="menu-button"></a>
       </div>
 
       <div class="header-content">
@@ -29,9 +55,10 @@
           Eu sou o Boole, o seu tutor de programação. Me pergunte sobre alguma linguagem, uma dúvida ou código seu.
         </p>
       </div>
-    </header>
+      </header>
 
-    <main class="chat-main" id="chat-main" data-section="main">
+
+      <main class="chat-main" id="chat-main" data-section="main">
       <section
         class="chat-messages"
         id="chat-messages"
@@ -39,9 +66,9 @@
         aria-live="polite"
         aria-label="Mensagens do chat"
       ></section>
-    </main>
+      </main>
 
-    <footer class="chat-input" id="chat-input" data-section="input">
+      <footer class="chat-input" id="chat-input" data-section="input">
       <form id="chat-form" data-role="chat-form" action="#" method="post">
         <div class="input-wrapper">
           <label for="input-field" class="sr-only">Mensagem</label>
@@ -66,9 +93,13 @@
           </button>
         </div>
       </form>
-    </footer>
+      </footer>
+    </div>
   </div>
 
   <script defer src="{{url_for ('static', filename='behavior/index.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="{{ url_for('static', filename='behavior/sidebar.js') }}"></script>
+
 </body>
 </html>
