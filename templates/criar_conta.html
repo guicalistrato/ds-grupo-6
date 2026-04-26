@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <title>Criar Conta</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boole - Criar Conta</title>
 </head>
 <body>
     <hr>
@@ -9,34 +11,51 @@
     <h2>Criar Conta</h2>
     <div>
         <input type="text" id="usuario" placeholder="Usuário">
-        <p><input type="password" id="senha" placeholder="Senha"></p>
-        <p><input type="password" id="senha_confirma" placeholder="Confirme sua senha"></p>
+        <input type="password" id="senha" placeholder="Senha">
+        <input type="password" id="senha_confirma" placeholder="Confirme sua senha">
         <button type="button" onclick="criacao_conta()">Enviar</button>
     </div>
 
+    <h3>Já tem uma conta? <a href="/login">Faça login</a></h3>
+
     <script>
-        function criacao_conta() {
-            const usuario = document.getElementById('usuario').value;
+        async function criacao_conta() {
+            const usuario = document.getElementById('usuario').value.trim();
             const senha = document.getElementById('senha').value;
             const senha_confirma = document.getElementById('senha_confirma').value;
 
-            fetch('/criar-conta', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ usuario: usuario, senha: senha, senha_confirma: senha_confirma }),
-            })
-            .then(response => response.json())
-                .then(data => {
-                    if (data.redirect) {
-                        window.location.href = data.redirect; // AQUI acontece o redirecionamento real
-                    } else {
-                        alert(data.erro);
-                    }
-             });
-        }
-    </script>
+            if (!usuario || !senha || !senha_confirma) {
+                alert('Preencha todos os campos.');
+                return;
+            }
 
+            if (senha !== senha_confirma) {
+                alert('As senhas não coincidem.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/criar-conta', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, senha, senha_confirma }),
+                });
+                const data = await res.json();
+
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else if (data.erro) {
+                    alert(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão. Tente novamente.');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') criacao_conta();
+        });
+    </script>
 </body>
 </html>

@@ -1,9 +1,12 @@
 <!DOCTYPE html>
+<html lang="pt-br">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boole</title>
 </head>
 <body>
-    <h3>Digite sua dúvida: </h3>
+    <h3>Digite sua dúvida:</h3>
     <div>
         <input type="text" id="duvida" placeholder="Dúvida">
         <button type="button" onclick="resposta_API()">Enviar</button>
@@ -13,29 +16,36 @@
     <p id="resposta" style="color: blue;"></p>
 
     <script>
-        function resposta_API()
-        {
-            const duvida = document.getElementById('duvida').value;
+        async function resposta_API() {
+            const duvida = document.getElementById('duvida').value.trim();
 
-            fetch('/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ duvida : duvida }),
-            })
-            // transforma a resposta em json
-            .then(response => response.json()) 
-            .then(data => {
+            if (!duvida) {
+                alert('Digite uma dúvida antes de enviar.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ duvida }),
+                });
+                const data = await res.json();
+
                 if (data.resultado) {
-                    // coloca a resposta na tela
                     document.getElementById('resposta').innerText = data.resultado;
                 } else if (data.erro) {
                     alert(data.erro);
                 }
-            })
-            .catch(error => console.error('Erro:', error));
-
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão. Tente novamente.');
+            }
         }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') resposta_API();
+        });
     </script>
 </body>
+</html>
