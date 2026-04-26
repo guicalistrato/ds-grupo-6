@@ -1,51 +1,79 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boole</title>
-</head>
-<body>
-    <h3>Digite sua dúvida:</h3>
-    <div>
-        <input type="text" id="duvida" placeholder="Dúvida">
-        <button type="button" onclick="resposta_API()">Enviar</button>
-    </div>
-
-    <h3>Resposta do Boole:</h3>
-    <p id="resposta" style="color: blue;"></p>
-
-    <script>
-        async function resposta_API() {
-            const duvida = document.getElementById('duvida').value.trim();
-
-            if (!duvida) {
-                alert('Digite uma dúvida antes de enviar.');
-                return;
-            }
-
-            try {
-                const res = await fetch('/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ duvida }),
-                });
-                const data = await res.json();
-
-                if (data.resultado) {
-                    document.getElementById('resposta').innerText = data.resultado;
-                } else if (data.erro) {
-                    alert(data.erro);
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro de conexão. Tente novamente.');
-            }
-        }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Enter') resposta_API();
-        });
-    </script>
-</body>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boole</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='style/index.css')}}" />
+  <link rel="stylesheet" href="{{url_for('static', filename='style/sidebar.css')}}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class = "site-wrapper" id="site-wrapper">
+    {% include "sidebar.html" %}
+    <div class="chat-container" id="chat-container" data-component="chat">
+
+      <header class="chat-header" id="chat-header" data-section="header">
+      <div>
+        <a href="javascript:void(0)" id="openbtn" onclick="openSidebar()"><img src="{{url_for('static', filename='images/menu_icon.png')}}" alt="Menu" class="openbtn"></a>
+      </div>
+
+      <div class="header-content">
+        <h1 class="chat-title" id="chat-title" data-role="chat-title">
+          >_ OI DEV!
+        </h1>
+        <p class="chat-subtitle" id="chat-subtitle">
+          Eu sou o Boole, o seu tutor de programação. Me pergunte sobre alguma linguagem, uma dúvida ou código seu.
+        </p>
+      </div>
+      </header>
+
+
+      <main class="chat-main" id="chat-main" data-section="main">
+      <section
+        class="chat-messages"
+        id="chat-messages"
+        data-section="messages"
+        aria-live="polite"
+        aria-label="Mensagens do chat"
+      ></section>
+      </main>
+
+      <footer class="chat-input" id="chat-input" data-section="input">
+      <form id="chat-form" data-role="chat-form" action="#" method="post">
+        <div class="input-wrapper">
+          <label for="input-field" class="sr-only">Mensagem</label>
+          <textarea
+            class="input-field"
+            id="input-field"
+            name="message"
+            placeholder="No que posso te ajudar?"
+            autocomplete="off"
+            data-role="message-input"
+            rows="1"
+            required
+          ></textarea>
+          <button
+            type="submit"
+            class="send-button"
+            id="send-button"
+            data-action="send-message"
+            aria-label="Enviar mensagem"
+          >
+            <img src="{{url_for ('static', filename='images/send_icon.png')}}" width="38px" height="38px">
+          </button>
+        </div>
+      </form>
+      </footer>
+    </div>
+  </div>
+
+  <script defer src="{{url_for ('static', filename='behavior/index.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+</body>
 </html>

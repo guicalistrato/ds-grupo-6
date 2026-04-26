@@ -164,8 +164,9 @@ def login_post():
         session["user_id"] = usuario
         session.pop("anonymous", None)
         return {"redirect": "/"}, 200
-
-    return {"erro": "Usuário ou senha incorretos"}, 401
+    else:
+        print('nao ok')
+        return {"erro": "Usuário ou senha inválidos"}, 401
 
 @app.get('/criar-conta')
 def criar_conta_get():
