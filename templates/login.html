@@ -1,73 +1,73 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boole - Login</title>
-</head>
-<body>
-    <hr>
-
-    <h2>Login</h2>
-    <div>
-        <input type="text" id="usuario" placeholder="Usuário">
-        <input type="password" id="senha" placeholder="Senha">
-        <button type="button" onclick="enviar_dados()">Enviar</button>
-    </div>
-
-    <h3>Não tem uma conta? <a href="/criar-conta">Crie uma</a></h3>
-
-    <button type="button" onclick="continuar_sem_login()">Continuar sem login</button>
-
-    <script>
-        async function enviar_dados() {
-            const usuario = document.getElementById('usuario').value.trim();
-            const senha = document.getElementById('senha').value;
-
-            if (!usuario || !senha) {
-                alert('Preencha usuário e senha.');
-                return;
-            }
-
-            try {
-                const res = await fetch('/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario, senha }),
-                });
-                const data = await res.json();
-
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                } else if (data.erro) {
-                    alert(data.erro);
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro de conexão. Tente novamente.');
-            }
-        }
-
-        async function continuar_sem_login() {
-            try {
-                const res = await fetch('/continuar-sem-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-                const data = await res.json();
-
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro de conexão. Tente novamente.');
-            }
-        }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Enter') enviar_dados();
-        });
-    </script>
-</body>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boole - Login</title>
+</head>
+<body>
+    <hr>
+
+    <h2>Login</h2>
+    <div>
+        <input type="text" id="usuario" placeholder="Usuário">
+        <input type="password" id="senha" placeholder="Senha">
+        <button type="button" onclick="enviar_dados()">Enviar</button>
+    </div>
+
+    <h3>Não tem uma conta? <a href="/criar-conta">Crie uma</a></h3>
+
+    <button type="button" onclick="continuar_sem_login()">Continuar sem login</button>
+
+    <script>
+        async function enviar_dados() {
+            const usuario = document.getElementById('usuario').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            if (!usuario || !senha) {
+                alert('Preencha usuário e senha.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, senha }),
+                });
+                const data = await res.json();
+
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else if (data.erro) {
+                    alert(data.erro);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão. Tente novamente.');
+            }
+        }
+
+        async function continuar_sem_login() {
+            try {
+                const res = await fetch('/continuar-sem-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão. Tente novamente.');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') enviar_dados();
+        });
+    </script>
+</body>
 </html>
