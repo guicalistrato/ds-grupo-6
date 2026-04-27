@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, session, g
+from flask import Flask, render_template, request, session, g, redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
@@ -6,15 +6,13 @@ from boole import run_boole
 
 from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id, receber_duvidas_chat
 
-# configuração inicial
-app = Flask(__name__)
+# ============= CONFIGURAÇÃO =============
 
-# armazena os dados no servidor ao invés dos cookies
+app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# garante que usuário não consiga acessar versões antigas
 @app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -25,7 +23,6 @@ def after_request(response):
 # ============= BANCO DE DADOS =============
 @app.teardown_appcontext
 def close_db(e=None):
-    # Fecha a conexão com o banco de dados ao fim de cada requisição.
     db = g.pop('db', None)
     if db is not None:
         db.close()
@@ -33,12 +30,10 @@ def close_db(e=None):
 # ============= ROTAS =============
 # página inicial
 @app.get("/")
-@login_required
 def index_get():
     return render_template("index.html")
 
 @app.post("/")
-@login_required
 def index_post():
     dados = request.get_json()
     if not dados:
@@ -76,27 +71,32 @@ def index_post():
 
     return {"resultado": resposta_boole, "titulo": titulo}, 200
 
-# rota para obter histórico de dúvidas
 @app.get("/historico")
-@login_required
 def obter_historico_route():
-    usuario = session.get("user_id")
-    historico = obter_historico(usuario)
-    return {"duvidas": historico}, 200
+    usuario, erro = checar_autenticacao()
+    if erro:
+        return erro
 
-# rota para obter uma dúvida específica
+    return {"duvidas": obter_historico(usuario)}, 200
+
 @app.get("/historico/<int:duvida_id>")
-@login_required
 def obter_duvida_route(duvida_id):
-    usuario = session.get("user_id")
-    duvida = obter_duvida(usuario, duvida_id)
+    usuario, erro = checar_autenticacao()
+    if erro:
+        return erro
 
+    duvida = obter_duvida(usuario, duvida_id)
     if not duvida:
         return {"erro": "Dúvida não encontrada"}, 404
 
     return duvida, 200
 
-# página de login
+@app.post('/continuar-sem-login')
+def continuar_sem_login():
+    session.clear()
+    session["anonymous"] = True
+    return {"redirect": "/"}, 200
+
 @app.get('/login')
 def login_get():
     if session.get("user_id"):
@@ -111,28 +111,27 @@ def login_post():
     if not dados:
         return {"erro": "Dados não recebidos"}, 400
 
-    usuario = dados.get('usuario')
-    senha = dados.get('senha')
+    usuario = dados.get('usuario', '').strip()
+    senha = dados.get('senha', '')
 
     if not usuario or not senha:
         return {"erro": "Usuário e senha são obrigatórios"}, 400
 
-    db = get_db()
-    row = db.execute(
+    row = get_db().execute(
         "SELECT senha FROM usuarios WHERE usuario = ?", (usuario,)
     ).fetchone()
 
     if row and check_password_hash(row["senha"], senha):
         session["user_id"] = usuario
+        session.pop("anonymous", None)
         return {"redirect": "/"}, 200
     else:
         print('nao ok')
         return {"erro": "Usuário ou senha inválidos"}, 401
 
-# página de criar conta
 @app.get('/criar-conta')
 def criar_conta_get():
-    if session.get("user_id"): #se ele ja ta logado ele tem uma conta
+    if session.get("user_id"):
         return redirect("/")
     return render_template('criar_conta.html')
 
@@ -155,19 +154,16 @@ def criar_conta_post():
         return {"erro": "As senhas não coincidem"}, 400
 
     db = get_db()
-    usuario_existente = db.execute(
-        "SELECT usuario FROM usuarios WHERE usuario = ?", (usuario,)
-    ).fetchone()
-
-    if usuario_existente:
+    if db.execute(
+        "SELECT 1 FROM usuarios WHERE usuario = ?", (usuario,)
+    ).fetchone():
         return {"erro": "Esse nome de usuário já está em uso."}, 400
 
-    hash_senha = generate_password_hash(senha)
     db.execute(
-        "INSERT INTO usuarios (usuario, senha) VALUES (?, ?)", (usuario, hash_senha)
+        "INSERT INTO usuarios (usuario, senha) VALUES (?, ?)",
+        (usuario, generate_password_hash(senha))
     )
     db.commit()
-
     return {"redirect": "/login"}, 200
 
 # logout

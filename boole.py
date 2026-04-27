@@ -2,21 +2,16 @@ import os
 from google import genai
 from dotenv import load_dotenv
 
-# Carrega as variáveis de ambiente do arquivo .env.local
 load_dotenv(".env.local")
 
-# Obtém a chave da API
 api_key = os.getenv("GEMINI_API_KEY")
 
-# Valida se a chave foi encontrada
 if not api_key:
     print("API KEY não encontrada no .env.local")
     raise SystemExit(1)
 
-# Cliente inicializado uma única vez no nível do módulo
 client = genai.Client(api_key=api_key)
 
-# Define o comportamento do tutor (fixo, não precisa ser recriado a cada chamada)
 SYSTEM_PROMPT = """
 Você é o Boole, um tutor de programação voltado ao aprendizado.
 
@@ -41,6 +36,10 @@ Se o usuário pedir código, responda educadamente que você não pode fornecer 
 
 MENSAGEM_ERRO_API = "Desculpe, ocorreu um erro ao processar sua dúvida. Tente novamente em alguns instantes."
 
+CONFIG = genai.types.GenerateContentConfig(
+    system_instruction=SYSTEM_PROMPT
+)
+
 
 def run_boole(pergunta: str, num) -> str:
     """Recebe uma pergunta do aluno e retorna a resposta do tutor Boole."""
@@ -54,7 +53,8 @@ def run_boole(pergunta: str, num) -> str:
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=full_prompt
+            contents=pergunta,
+            config=CONFIG
         )
         # se for a primeira mensagem, gera um título
         titulo_final = ''
