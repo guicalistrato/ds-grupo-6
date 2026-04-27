@@ -35,8 +35,7 @@
     let hasStarted = false;
     let messageCounter = 0;
 
-    // 1. LER A URL PARA SABER SE É UM CHAT EXISTENTE
-    // Acessamos a variável id_chat que o Flask renderiza, ou lemos direto da URL
+    // acessa a variável id_chat que o Flask renderiza ou le direto da URL
     const pathParts = window.location.pathname.split('/');
     const possibleChatId = pathParts[pathParts.length - 1]; 
     
@@ -44,9 +43,7 @@
         carregarHistorico(possibleChatId);
     }
 
-    // ... [seus estados isSending, hasStarted, etc] ...
-
-    // 2. FUNÇÃO QUE BUSCA OS DADOS NA API NOVA
+    // busca o historico no back
     async function carregarHistorico(chatId) {
       try {
         setSendingState(true); // Desativa o input enquanto carrega
