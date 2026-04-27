@@ -4,7 +4,7 @@ from flask_session import Session
 import sqlite3
 from boole import run_boole
 
-from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id, receber_duvidas_chat
+from funcoes import login_required, checar_autenticacao, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id, receber_duvidas_chat
 
 # ============= CONFIGURAÇÃO =============
 

@@ -97,3 +97,12 @@ def criar_id():
             codigo += letra
 
     return(codigo)
+
+def checar_autenticacao():
+    #Retorna (usuario, erro) onde erro é uma resposta Flask ou None. Centraliza a lógica de autenticação usada nas rotas de histórico.
+    if session.get("anonymous"):
+        return None, ({"erro": "Faça login para acessar seu histórico"}, 401)
+    usuario = session.get("user_id")
+    if not usuario:
+        return None, ({"erro": "Não autenticado"}, 401)
+    return usuario, None
