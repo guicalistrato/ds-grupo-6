@@ -20,11 +20,64 @@
             </ul>
         </div>
 
+        {% if usuario == "" %}
+        <button id="abrir_login" onclick="abrirLoginPopup()">
+            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
+            Login
+        </button>
+        {% else %}
         <button id="logout" onclick="logout()">
             <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
             Logout
         </button>
+        {% endif %}
+
+    <div id="loginPopup" class="popup">
+        <div class="popup-content">
+            <span class="fechar" onclick="fecharLoginPopup()">&times;</span>
+
+            <div id="bloco-central">
+
+                <div id="titulo">
+                    <span id="main-title">Bem-vindo, dev!</span>
+                    <span>Faça seu login ou signup</span>
+                </div>
+
+                <div id="login">
+                    <input type="text" id="usuario" placeholder="Usuário">
+                    <p><input type="password" id="senha" placeholder="Senha"></p>
+                    <button type="button" id="botao-login" onclick="enviar_dados()">Continuar</button>
+                </div>
+
+                <div id="botoes-extras">
+                    <button id="direc-criar-conta" onclick="fecharLoginPopup(); abrir_criar_conta()" type="button">Crie uma conta</button>
+                    <button id="cont-sem-login" onclick="continuar_sem_login()" type="button">Continuar sem login</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+     <div id="criar_conta_popup" class="popup">
+        <div class="popup-content">
+            <span class="fechar" onclick="fechar_criar_conta()">&times;</span>
+
+            <div id="bloco-central">
+                <span id="titulo">Crie sua conta</span>
+                <input type="text" id="usuario_criacao" placeholder="Usuário">
+                <input type="password" id="senha_criacao" placeholder="Senha">
+                <input type="password" id="senha_confirma" placeholder="Confirme sua senha">
+                <button type="button" onclick="criacao_conta()" id="botao-criar-conta">Continuar</button>
+                <div id="botoes-extras">
+                    <button id="botao-voltar" onclick="fechar_criar_conta(); abrirLoginPopup()" type="button">Voltar</button>
+                    <button id="cont-sem-login" onclick="continuar_sem_login()" type="button">Continuar sem login</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     </div>
     <script src="{{ url_for('static', filename='behavior/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='behavior/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='behavior/criar_conta.js') }}"></script>
     <script src="{{ url_for('static', filename='behavior/logout.js') }}"></script>
