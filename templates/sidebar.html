@@ -23,9 +23,6 @@
 
         <div class="content">
             <ul id="conversation-list"> <!--estrutura básica do histórico dinâmico-->
-            {% for chat in conversations %}
-                <li><a href="/chat/{{ chat.id }}">{{ chat.title }}</a></li>
-            {% endfor %}
             </ul>
         </div>
     </div>

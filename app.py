@@ -95,6 +95,29 @@ def api_obter_chat_especifico(id_chat):
 
     return {"mensagens": mensagens, "nome_chat": nome_chat}, 200
 
+@app.get("/api/listar_chats")
+@login_required
+def api_listar_chats():
+    usuario = session.get("user_id")
+    db = get_db()
+    
+    # Busca os chats únicos do usuário, ordenando pelo mais recente
+    linhas = db.execute(
+        """
+        SELECT id_chat, nome_chat 
+        FROM duvidas 
+        WHERE usuario = ? 
+        GROUP BY id_chat 
+        ORDER BY MIN(id) DESC
+        """,
+        (usuario,)
+    ).fetchall()
+
+    # Formata como uma lista de dicionários
+    chats = [{"id_chat": linha["id_chat"], "nome_chat": linha["nome_chat"]} for linha in linhas]
+
+    return {"chats": chats}, 200
+
 if __name__ == "__main__":
     app.run(debug=True)
 

@@ -262,6 +262,13 @@
       if (messageCounter < 3) {
         atualizarTituloConversa(titulo);
       }
+
+      // chama a função da sidebar
+      if (typeof window.carregarSidebarChats === 'function') {
+          window.carregarSidebarChats();
+      } else {
+          console.warn("A função da sidebar ainda não foi carregada no window.");
+      }
       
       return String(data.resultado).trim();
     }

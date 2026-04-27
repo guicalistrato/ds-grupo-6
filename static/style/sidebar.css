@@ -64,19 +64,28 @@
 }
 
 .content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
   background: transparent;
   width: 200px;
-  color: grey;
+  color: #fff;
 }
 
 .content ul {
   list-style: none;
   padding: 10px 20px;
   margin: 0;
-  color: grey;
+}
+
+.content ul li a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content ul li a:hover {
+  color: #0fb3be;
 }
 
 #nova-conversa{
