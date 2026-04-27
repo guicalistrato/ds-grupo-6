@@ -14,7 +14,7 @@ function enviar_dados() {
 
     .then(data => {
         if (data.redirect) {
-            window.location.href = data.redirect; 
+            window.location.href = 'data.redirect'; 
         } else if (data.erro) {
             alert(data.erro); 
         }

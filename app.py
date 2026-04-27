@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, g
+from flask import Flask, render_template, request, session, g, redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
@@ -31,7 +31,7 @@ def close_db(e=None):
 # página inicial
 @app.get("/")
 def index():
-    return {"redirect": "/login"}, 200
+    return redirect("/login")
 
 @app.get("/chat")
 @app.get("/chat/<id_chat>")
@@ -125,12 +125,12 @@ def continuar_sem_login():
     session.clear()
     session["user_id"] = "anonymous"
     session["anonymous"] = True
-    return {"redirect": "/chat"}, 200
+    return redirect("/chat")
 
 @app.get('/login')
 def login_get():
     if session.get("user_id"):
-        return {"redirect": "/chat"}, 200
+        return redirect("/chat")
     return render_template('login.html')
 
 @app.post('/login')
@@ -161,7 +161,7 @@ def login_post():
 @app.get('/criar-conta')
 def criar_conta_get():
     if session.get("user_id"):
-        return {"redirect": "/chat"}, 200
+        return redirect("/chat")
     return render_template('criar_conta.html')
 
 @app.post('/criar-conta')
@@ -200,4 +200,4 @@ def criar_conta_post():
 def logout():
     session.clear()
 
-    return {"redirect": "/login"}, 200
+    return redirect("/login")
