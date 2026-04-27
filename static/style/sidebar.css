@@ -97,6 +97,21 @@
   padding: 10px;
 }
 
+#logout {
+  margin-top: auto; /* botão fica no final da sidebar */
+  align-self: flex-start;
+  background-color: transparent;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#conversas-title{
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .popup {
   display: none;
   position: fixed;
