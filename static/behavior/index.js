@@ -62,7 +62,7 @@
 
       if (!hasStarted) {
         hasStarted = true;
-        activateConversationUI(userText);
+        activateConversationUI();
       }
 
       appendMessage('user', userText);
@@ -89,7 +89,7 @@
     }
 
     // ativa mudanças visuais quando a primeira mensagem é enviada
-    function activateConversationUI(firstQuestion) {
+    function activateConversationUI(titulo = '...') {
       chatContainer.classList.add('chat-started');
 
       if (headerContent) {
@@ -99,10 +99,20 @@
       if (!chatHeader.querySelector('.topic-pill')) {
         const topicPill = document.createElement('div');
         topicPill.className = 'topic-pill';
-        topicPill.textContent = buildTopicLabel(firstQuestion);
+        topicPill.textContent = titulo;
         chatHeader.appendChild(topicPill);
       }
     }
+
+  function atualizarTituloConversa(titulo) {
+    // Procura a pill que foi criada na tela
+    const topicPill = chatHeader.querySelector('.topic-pill');
+    
+    // Se ela existir, atualiza o texto
+    if (topicPill) {
+      topicPill.textContent = titulo;
+  }
+  }
 
     // cria e adiciona uma mensagem (usuario ou bot) no chat
     function appendMessage(author, text) {
@@ -175,7 +185,7 @@
       const response = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ duvida: question })
+        body: JSON.stringify({ duvida: question, num: messageCounter })
       });
 
       let data = null;
@@ -193,7 +203,16 @@
       if (!data || !data.resultado) {
         throw new Error('Resposta vazia');
       }
+      
+      // atualiza o titulo do chat
+      const titulo = String(data.titulo).trim();
 
+      // atualizar titulo caso seja primeira mensagem
+      console.log(messageCounter)
+      if (messageCounter < 3) {
+        atualizarTituloConversa(titulo);
+      }
+      
       return String(data.resultado).trim();
     }
 
@@ -242,23 +261,6 @@
       if (sampleMessages.length > 0) {
         chatMessages.innerHTML = '';
       }
-    }
-
-    // gera um rotulo/resumo da duvida para exibir no topo
-    function buildTopicLabel(question) {
-      const cleaned = sanitizeInput(question).toLowerCase();
-
-      if (/recurs/i.test(cleaned)) {
-        return 'Duvida sobre funcoes recursivas';
-      }
-
-      const sobreMatch = cleaned.match(/sobre\s+(.+)/i);
-      if (sobreMatch && sobreMatch[1]) {
-        return capAndTrim('Duvida sobre ' + sobreMatch[1]);
-      }
-
-      const firstWords = cleaned.split(' ').slice(0, 4).join(' ');
-      return capAndTrim('Duvida sobre ' + firstWords);
     }
 
     // capitaliza e limita o tamanho do texto

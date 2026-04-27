@@ -3,7 +3,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
 from boole import run_boole
-from funcoes import login_required
+
+from funcoes import login_required, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id, receber_duvidas_chat
 
 # ============= CONFIGURAÇÃO =============
 
@@ -20,74 +21,14 @@ def after_request(response):
     return response
 
 # ============= BANCO DE DADOS =============
-
-def get_db():
-    if 'db' not in g:
-        g.db = sqlite3.connect('dados.db')
-        g.db.row_factory = sqlite3.Row
-    return g.db
-
 @app.teardown_appcontext
 def close_db(e=None):
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
-# ============= FUNÇÕES AUXILIARES =============
-
-def salvar_duvida(usuario, pergunta, resposta):
-    try:
-        db = get_db()
-        db.execute(
-            "INSERT INTO duvidas (usuario, pergunta, resposta) VALUES (?, ?, ?)",
-            (usuario, pergunta, resposta)
-        )
-        db.commit()
-        return True
-    except Exception as e:
-        print(f"Erro ao salvar dúvida: {e}")
-        return False
-
-def obter_historico(usuario):
-    try:
-        db = get_db()
-        cursor = db.execute(
-            """SELECT id, pergunta, resposta, data_criacao
-               FROM duvidas
-               WHERE usuario = ?
-               ORDER BY data_criacao DESC""",
-            (usuario,)
-        )
-        return [dict(row) for row in cursor.fetchall()]
-    except Exception as e:
-        print(f"Erro ao obter histórico: {e}")
-        return []
-
-def obter_duvida(usuario, duvida_id):
-    try:
-        db = get_db()
-        resultado = db.execute(
-            """SELECT id, pergunta, resposta, data_criacao
-               FROM duvidas
-               WHERE id = ? AND usuario = ?""",
-            (duvida_id, usuario)
-        ).fetchone()
-        return dict(resultado) if resultado else None
-    except Exception as e:
-        print(f"Erro ao obter dúvida: {e}")
-        return None
-
-def checar_autenticacao():
-    #Retorna (usuario, erro) onde erro é uma resposta Flask ou None. Centraliza a lógica de autenticação usada nas rotas de histórico.
-    if session.get("anonymous"):
-        return None, ({"erro": "Faça login para acessar seu histórico"}, 401)
-    usuario = session.get("user_id")
-    if not usuario:
-        return None, ({"erro": "Não autenticado"}, 401)
-    return usuario, None
-
 # ============= ROTAS =============
-
+# página inicial
 @app.get("/")
 def index_get():
     return render_template("index.html")
@@ -98,17 +39,37 @@ def index_post():
     if not dados:
         return {"erro": "Dados não recebidos"}, 400
 
+    num = dados.get('num') # número de perguntas já feitas
     duvida = dados.get('duvida', '').strip()
     if not duvida:
         return {"erro": "Dúvida não pode estar vazia"}, 400
 
-    resposta_boole = run_boole(duvida)
+    resultados = run_boole(duvida, num)
+    resposta_boole = resultados[0]
+    titulo = resultados[1] 
+
+    # caso seja a primeira mensagem, cria um id pro chat
+    if num <= 2:
+        id_chat = criar_id()
+
+    else:
+        # caso contrario, pega ultimo id
+        db = get_db()
+        cursor = db.execute(
+            "SELECT id_chat FROM duvidas WHERE id = (SELECT MAX(id) FROM duvidas);"
+        )
+        resultado = cursor.fetchone()
+        id_chat_dict = dict(resultado)
+        id_chat = id_chat_dict['id_chat']
 
     usuario = session.get("user_id")
-    if usuario:
-        salvar_duvida(usuario, duvida, resposta_boole)
+    salvar_duvida(usuario, duvida, resposta_boole, titulo, id_chat)
 
-    return {"resultado": resposta_boole}, 200
+    # recebe duvidas do chat
+    duvida = receber_duvidas_chat(id_chat)
+    print(duvida)
+
+    return {"resultado": resposta_boole, "titulo": titulo}, 200
 
 @app.get("/historico")
 def obter_historico_route():
@@ -204,6 +165,13 @@ def criar_conta_post():
     )
     db.commit()
     return {"redirect": "/login"}, 200
+
+# logout
+@app.route("/logout")
+def logout():
+    session.clear()
+
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)

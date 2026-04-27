@@ -41,11 +41,14 @@ CONFIG = genai.types.GenerateContentConfig(
 )
 
 
-def run_boole(pergunta: str) -> str:
+def run_boole(pergunta: str, num) -> str:
     """Recebe uma pergunta do aluno e retorna a resposta do tutor Boole."""
 
     if not pergunta or not pergunta.strip():
         return "Por favor, envie uma pergunta válida."
+
+    full_prompt = f"{SYSTEM_PROMPT}\n\nPergunta do aluno:\n{pergunta}"
+    prompt_titulo = f"Gere apenas um título simples, de poucas palavras, contendo apenas letras ou números, sobre a seguinte pergunta: {pergunta}"
 
     try:
         response = client.models.generate_content(
@@ -53,7 +56,16 @@ def run_boole(pergunta: str) -> str:
             contents=pergunta,
             config=CONFIG
         )
-        return response.text
+        # se for a primeira mensagem, gera um título
+        titulo_final = ''
+        if num <= 2:
+            titulo = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt_titulo
+            )
+
+            titulo_final = titulo.text
+        return (response.text, titulo_final)
 
     except Exception as error:
         print(f"Erro ao chamar a API: {error}")
