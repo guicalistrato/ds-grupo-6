@@ -12,6 +12,8 @@
   overflow-x: hidden;
   transition: 0.5s;
   font-family: "JetBrains Mono", monospace;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar li {
@@ -64,6 +66,9 @@
 }
 
 .content {
+  flex: 1; /* faz com que a lista ocupe todo o espaço disponível */
+  overflow-y: auto; /* permite scroll se houver muitos chats */
+  margin-bottom: 20px;
   background: transparent;
   width: 200px;
   color: #fff;
@@ -99,4 +104,14 @@
   color: #fff;
   border: none;
   padding: 10px;
+}
+
+#logout {
+  margin-top: auto; /* botão fica no final da sidebar */
+  align-self: flex-start;
+  background-color: transparent;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
 }
