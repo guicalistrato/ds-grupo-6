@@ -13,7 +13,7 @@ function criacao_conta() {
     .then(response => response.json())
         .then(data => {
             if (data.redirect) {
-                window.location.href = data.redirect; // AQUI acontece o redirecionamento real
+                window.location.href = data.redirect;
             } else {
                 alert(data.erro);
             }
