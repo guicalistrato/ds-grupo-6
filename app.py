@@ -69,7 +69,6 @@ def chat_post(id_chat=None):
 
     # recebe duvidas do chat
     duvida = receber_duvidas_chat(id_chat)
-    print(duvida)
 
     return {"resultado": resposta_boole, "titulo": titulo, "id_chat": id_chat, "novo_chat": novo_chat}, 200
 
@@ -121,9 +120,10 @@ def api_listar_chats():
 if __name__ == "__main__":
     app.run(debug=True)
 
-@app.post('/continuar-sem-login')
+@app.get('/continuar-sem-login')
 def continuar_sem_login():
     session.clear()
+    session["user_id"] = "anonymous"
     session["anonymous"] = True
     return redirect("/chat")
 
@@ -156,7 +156,6 @@ def login_post():
         session.pop("anonymous", None)
         return redirect("/chat")
     else:
-        print('nao ok')
         return {"erro": "Usuário ou senha inválidos"}, 401
 
 @app.get('/criar-conta')

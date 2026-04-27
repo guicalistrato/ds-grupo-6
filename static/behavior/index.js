@@ -258,7 +258,6 @@
       const titulo = String(data.titulo).trim();
 
       // atualizar titulo caso seja primeira mensagem
-      console.log(messageCounter)
       if (messageCounter < 3) {
         atualizarTituloConversa(titulo);
       }

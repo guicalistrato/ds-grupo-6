@@ -26,3 +26,7 @@ function enviar_dados() {
 function criar_conta() {
     window.location.href = '/criar-conta';
 }
+
+function continuar_sem_login() {
+    window.location.href = '/continuar-sem-login';
+}

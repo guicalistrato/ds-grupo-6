@@ -10,10 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function carregarSidebarChats() {
-    console.log("1. Iniciando carregamento da sidebar...");
     try {
         const response = await fetch('/api/listar_chats');
-        console.log("2. Resposta da API recebida. Status:", response.status);
         
         if (!response.ok) {
             console.error('Falha ao carregar lista de chats');
@@ -21,7 +19,6 @@ async function carregarSidebarChats() {
         }
 
         const data = await response.json();
-        console.log("3. Dados transformados em JSON:", data);
 
         const conversationList = document.getElementById('conversation-list');
         if (!conversationList) {
@@ -30,8 +27,6 @@ async function carregarSidebarChats() {
         }
         
         conversationList.innerHTML = ''; 
-        console.log("4. Lista limpa. Quantidade de chats para renderizar:", data.chats ? data.chats.length : "Nenhum/Indefinido");
-
         if (data.chats && data.chats.length > 0) {
             data.chats.forEach(chat => {
                 const li = document.createElement('li');
@@ -48,7 +43,6 @@ async function carregarSidebarChats() {
                 li.appendChild(a);
                 conversationList.appendChild(li);
             });
-            console.log("5. Renderização concluída! Verifique a tela.");
         } else {
             console.warn("Aviso: A lista de chats chegou vazia.");
         }
