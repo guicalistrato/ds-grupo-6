@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import redirect, render_template, session, g
+from flask import redirect, session, g
 import sqlite3
 from random import randint, seed
 import time

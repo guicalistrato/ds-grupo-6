@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, session, g, redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
-import sqlite3
 from boole import run_boole
 
-from funcoes import login_required, checar_autenticacao, get_db, salvar_duvida, obter_duvida, obter_historico, criar_id, receber_duvidas_chat
+from funcoes import login_required, get_db, salvar_duvida, criar_id
 
 # ============= CONFIGURAÇÃO =============
 
@@ -66,9 +65,6 @@ def chat_post(id_chat=None):
 
     usuario = session.get("user_id")
     salvar_duvida(usuario, duvida, resposta_boole, titulo, id_chat)
-
-    # recebe duvidas do chat
-    duvida = receber_duvidas_chat(id_chat)
 
     return {"resultado": resposta_boole, "titulo": titulo, "id_chat": id_chat, "novo_chat": novo_chat}, 200
 
