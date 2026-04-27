@@ -10,21 +10,21 @@
             
         </div>
 
-        <button id="nova-conversa">
+        <button id="nova-conversa" onclick="nova_conversa()">
             <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
             Nova conversa
         </button>
+        
+        <div class="content">
+            <ul id="conversation-list"> <!--estrutura básica do histórico dinâmico-->
+            </ul>
+        </div>
 
-        <!-- lembrar de estilizar ! -->
         <button id="logout" onclick="logout()">
             <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
             Logout
         </button>
 
-        <div class="content">
-            <ul id="conversation-list"> <!--estrutura básica do histórico dinâmico-->
-            </ul>
-        </div>
     </div>
     <script src="{{ url_for('static', filename='behavior/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='behavior/logout.js') }}"></script>

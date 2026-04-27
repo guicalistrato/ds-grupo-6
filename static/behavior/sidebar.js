@@ -58,6 +58,11 @@ async function carregarSidebarChats() {
     }
 }
 
+// abrir um novo chat
+function nova_conversa() {
+    window.location.href = '/chat'
+}
+
 window.carregarSidebarChats = carregarSidebarChats;
 
 // função listas colapsáveis - em comentário porque nao vai ser necessária na versão atual, mas pode ser util futuramente
