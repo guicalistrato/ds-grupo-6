@@ -395,6 +395,6 @@ window.openSidebar = function () {
   }
 
   menu_button.style.visibility = 'hidden';
-  sidebar.style.width = '250px';
+  sidebar.style.width = '350px';
   /*container.style.marginLeft = '250px';*/
 };

@@ -11,11 +11,12 @@
         </div>
 
         <button id="nova-conversa" onclick="nova_conversa()">
-            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
+            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="Nova conversa" style="height: 22px;">
             Nova conversa
         </button>
         
         <div class="content">
+            <span id="conversas-title">Conversas</span>
             <ul id="conversation-list"> <!--estrutura básica do histórico dinâmico-->
             </ul>
         </div>
@@ -27,8 +28,7 @@
         </button>
         {% else %}
         <button id="logout" onclick="logout()">
-            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
-            Logout
+            <img src="{{ url_for('static', filename='images/botao-logout.png') }}" alt="Sair" style="height: 38px;">
         </button>
         {% endif %}
 
