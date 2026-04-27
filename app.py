@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, g, redirect
+from flask import Flask, render_template, request, session, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 import sqlite3
@@ -31,7 +31,7 @@ def close_db(e=None):
 # página inicial
 @app.get("/")
 def index():
-    return redirect("/login")
+    return {"redirect": "/login"}, 200
 
 @app.get("/chat")
 @app.get("/chat/<id_chat>")
@@ -125,12 +125,12 @@ def continuar_sem_login():
     session.clear()
     session["user_id"] = "anonymous"
     session["anonymous"] = True
-    return redirect("/chat")
+    return {"redirect": "/chat"}, 200
 
 @app.get('/login')
 def login_get():
     if session.get("user_id"):
-        return redirect("/chat")
+        return {"redirect": "/chat"}, 200
     return render_template('login.html')
 
 @app.post('/login')
@@ -154,14 +154,14 @@ def login_post():
     if row and check_password_hash(row["senha"], senha):
         session["user_id"] = usuario
         session.pop("anonymous", None)
-        return redirect("/chat")
+        return {"redirect": "/chat"}, 200
     else:
         return {"erro": "Usuário ou senha inválidos"}, 401
 
 @app.get('/criar-conta')
 def criar_conta_get():
     if session.get("user_id"):
-        return redirect("/chat")
+        return {"redirect": "/chat"}, 200
     return render_template('criar_conta.html')
 
 @app.post('/criar-conta')
@@ -193,11 +193,11 @@ def criar_conta_post():
         (usuario, generate_password_hash(senha))
     )
     db.commit()
-    return redirect("/login")
+    return {"redirect": "/login"}, 200
 
 # logout
 @app.route("/logout")
 def logout():
     session.clear()
 
-    return redirect("/login")
+    return {"redirect": "/login"}, 200
