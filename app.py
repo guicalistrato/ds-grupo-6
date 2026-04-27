@@ -30,11 +30,19 @@ def close_db(e=None):
 # ============= ROTAS =============
 # página inicial
 @app.get("/")
-def index_get():
-    return render_template("index.html")
+def index():
+    return redirect("/login")
 
-@app.post("/")
-def index_post():
+@app.get("/chat")
+@app.get("/chat/<id_chat>")
+@login_required
+def chat_get(id_chat=None):
+    return render_template("index.html", id_chat =id_chat)
+
+@app.post("/chat")
+@app.post("/chat/<id_chat>")
+@login_required
+def chat_post(id_chat=None):
     dados = request.get_json()
     if not dados:
         return {"erro": "Dados não recebidos"}, 400
@@ -48,19 +56,13 @@ def index_post():
     resposta_boole = resultados[0]
     titulo = resultados[1] 
 
-    # caso seja a primeira mensagem, cria um id pro chat
-    if num <= 2:
+    if not id_chat:
+        # Se não recebemos um id_chat na URL, significa que é a primeira mensagem
         id_chat = criar_id()
-
+        novo_chat = True
     else:
-        # caso contrario, pega ultimo id
-        db = get_db()
-        cursor = db.execute(
-            "SELECT id_chat FROM duvidas WHERE id = (SELECT MAX(id) FROM duvidas);"
-        )
-        resultado = cursor.fetchone()
-        id_chat_dict = dict(resultado)
-        id_chat = id_chat_dict['id_chat']
+        # Se já temos o id_chat na URL, apenas continuamos usando ele!
+        novo_chat = False
 
     usuario = session.get("user_id")
     salvar_duvida(usuario, duvida, resposta_boole, titulo, id_chat)
@@ -69,38 +71,43 @@ def index_post():
     duvida = receber_duvidas_chat(id_chat)
     print(duvida)
 
-    return {"resultado": resposta_boole, "titulo": titulo}, 200
+    return {"resultado": resposta_boole, "titulo": titulo, "id_chat": id_chat, "novo_chat": novo_chat}, 200
 
-@app.get("/historico")
-def obter_historico_route():
-    usuario, erro = checar_autenticacao()
-    if erro:
-        return erro
+# nova rota de historico
+@app.get("/api/chat/<id_chat>")
+@login_required
+def api_obter_chat_especifico(id_chat):
+    usuario = session.get("user_id")
+    db = get_db()
+    
+    # Busca todas as mensagens desse chat que pertencem a este usuário
+    linhas = db.execute(
+        "SELECT pergunta, resposta, nome_chat FROM duvidas WHERE id_chat = ? AND usuario = ? ORDER BY data_criacao ASC",
+        (id_chat, usuario)
+    ).fetchall()
 
-    return {"duvidas": obter_historico(usuario)}, 200
+    if not linhas:
+        return {"erro": "Chat não encontrado ou não pertence a este usuário"}, 404
 
-@app.get("/historico/<int:duvida_id>")
-def obter_duvida_route(duvida_id):
-    usuario, erro = checar_autenticacao()
-    if erro:
-        return erro
+    # Formata os dados para enviar ao frontend
+    mensagens = [{"pergunta": linha["pergunta"], "resposta": linha["resposta"]} for linha in linhas]
+    nome_chat = linhas[0]["nome_chat"] # O nome_chat se repete, pegamos do primeiro
 
-    duvida = obter_duvida(usuario, duvida_id)
-    if not duvida:
-        return {"erro": "Dúvida não encontrada"}, 404
+    return {"mensagens": mensagens, "nome_chat": nome_chat}, 200
 
-    return duvida, 200
+if __name__ == "__main__":
+    app.run(debug=True)
 
 @app.post('/continuar-sem-login')
 def continuar_sem_login():
     session.clear()
     session["anonymous"] = True
-    return {"redirect": "/"}, 200
+    return redirect("/chat")
 
 @app.get('/login')
 def login_get():
     if session.get("user_id"):
-        return redirect("/")
+        return redirect("/chat")
     return render_template('login.html')
 
 @app.post('/login')
@@ -124,7 +131,7 @@ def login_post():
     if row and check_password_hash(row["senha"], senha):
         session["user_id"] = usuario
         session.pop("anonymous", None)
-        return {"redirect": "/"}, 200
+        return redirect("/chat")
     else:
         print('nao ok')
         return {"erro": "Usuário ou senha inválidos"}, 401
@@ -132,7 +139,7 @@ def login_post():
 @app.get('/criar-conta')
 def criar_conta_get():
     if session.get("user_id"):
-        return redirect("/")
+        return redirect("/chat")
     return render_template('criar_conta.html')
 
 @app.post('/criar-conta')
@@ -164,14 +171,11 @@ def criar_conta_post():
         (usuario, generate_password_hash(senha))
     )
     db.commit()
-    return {"redirect": "/login"}, 200
+    return redirect("/login")
 
 # logout
 @app.route("/logout")
 def logout():
     session.clear()
 
-    return redirect("/")
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    return redirect("/login")

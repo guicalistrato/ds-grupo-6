@@ -35,6 +35,51 @@
     let hasStarted = false;
     let messageCounter = 0;
 
+    // 1. LER A URL PARA SABER SE É UM CHAT EXISTENTE
+    // Acessamos a variável id_chat que o Flask renderiza, ou lemos direto da URL
+    const pathParts = window.location.pathname.split('/');
+    const possibleChatId = pathParts[pathParts.length - 1]; 
+    
+    if (possibleChatId && possibleChatId !== 'chat' && possibleChatId !== '') {
+        carregarHistorico(possibleChatId);
+    }
+
+    // ... [seus estados isSending, hasStarted, etc] ...
+
+    // 2. FUNÇÃO QUE BUSCA OS DADOS NA API NOVA
+    async function carregarHistorico(chatId) {
+      try {
+        setSendingState(true); // Desativa o input enquanto carrega
+
+        const response = await fetch('/api/chat/' + chatId);
+        
+        if (!response.ok) {
+            throw new Error('Histórico não encontrado');
+        }
+        
+        const data = await response.json();
+        
+        if (data.mensagens && data.mensagens.length > 0) {
+          hasStarted = true;
+          activateConversationUI(data.nome_chat);
+          
+          data.mensagens.forEach(msg => {
+            appendMessage('user', msg.pergunta);
+            appendMessage('bot', msg.resposta);
+          });
+          
+          // O messageCounter precisa saber quantas mensagens já existem
+          // para enviar o número certo para a API do Gemini depois
+          messageCounter = data.mensagens.length * 2; 
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Não foi possível carregar a conversa.");
+      } finally {
+        setSendingState(false);
+      }
+    }
+
     // eventos de envio de mensagem (formulario e tecla enter)
     chatForm.addEventListener('submit', function (event) {
       event.preventDefault();
@@ -180,9 +225,9 @@
 
     // faz requisição ao backend para obter resposta da IA
     async function requestBotAnswer(question) {
-      // envia pergunta para o servidor
-      // espera resposta no formato JSON
-      const response = await fetch('/', {
+      // envia pergunta para o servidor usando a URL atual da pagina (/chat ou /chat/id)
+      const currentUrl = window.location.pathname;
+      const response = await fetch(currentUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ duvida: question, num: messageCounter })
@@ -202,6 +247,11 @@
 
       if (!data || !data.resultado) {
         throw new Error('Resposta vazia');
+      }
+      
+      // se for um chat recém-criado, atualiza a URL do navegador com o novo ID
+      if (data.novo_chat && data.id_chat) {
+        window.history.pushState({}, '', '/chat/' + data.id_chat);
       }
       
       // atualiza o titulo do chat
