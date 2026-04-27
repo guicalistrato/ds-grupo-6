@@ -3,7 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from boole import run_boole
 
-from funcoes import login_required, get_db, salvar_duvida, criar_id
+from funcoes import get_db, salvar_duvida, criar_id
 
 # ============= CONFIGURAÇÃO =============
 
@@ -30,17 +30,23 @@ def close_db(e=None):
 # página inicial
 @app.get("/")
 def index():
-    return redirect("/login")
+    return redirect("/chat")
 
+# rota do chat
 @app.get("/chat")
 @app.get("/chat/<id_chat>")
-@login_required
 def chat_get(id_chat=None):
-    return render_template("index.html", id_chat =id_chat)
+    # recebe usuário para ser adicionado na saudação, e checar que botao deve ser posto na sidebar
+    usuario = session.get("user_id")
+    if usuario == None:
+        usuario = ""
+    else:
+        usuario = f", {usuario}"
+
+    return render_template("index.html", id_chat=id_chat, usuario=usuario)
 
 @app.post("/chat")
 @app.post("/chat/<id_chat>")
-@login_required
 def chat_post(id_chat=None):
     dados = request.get_json()
     if not dados:
@@ -70,7 +76,6 @@ def chat_post(id_chat=None):
 
 # nova rota de historico
 @app.get("/api/chat/<id_chat>")
-@login_required
 def api_obter_chat_especifico(id_chat):
     usuario = session.get("user_id")
     db = get_db()
@@ -91,7 +96,6 @@ def api_obter_chat_especifico(id_chat):
     return {"mensagens": mensagens, "nome_chat": nome_chat}, 200
 
 @app.get("/api/listar_chats")
-@login_required
 def api_listar_chats():
     usuario = session.get("user_id")
     db = get_db()
@@ -119,7 +123,6 @@ if __name__ == "__main__":
 @app.get('/continuar-sem-login')
 def continuar_sem_login():
     session.clear()
-    session["user_id"] = "anonymous"
     session["anonymous"] = True
     return redirect("/chat")
 
@@ -127,7 +130,6 @@ def continuar_sem_login():
 def login_get():
     if session.get("user_id"):
         return redirect("/chat")
-    return render_template('login.html')
 
 @app.post('/login')
 def login_post():
@@ -150,15 +152,9 @@ def login_post():
     if row and check_password_hash(row["senha"], senha):
         session["user_id"] = usuario
         session.pop("anonymous", None)
-        return {"redirect": "/chat"}, 200
+        return {"redirect": "/chat", "usuario" : usuario}, 200
     else:
         return {"erro": "Usuário ou senha inválidos"}, 401
-
-@app.get('/criar-conta')
-def criar_conta_get():
-    if session.get("user_id"):
-        return redirect("/chat")
-    return render_template('criar_conta.html')
 
 @app.post('/criar-conta')
 def criar_conta_post():
@@ -189,11 +185,11 @@ def criar_conta_post():
         (usuario, generate_password_hash(senha))
     )
     db.commit()
-    return {"redirect": "/login"}, 200
+    return {"redirect": "/chat", "usuario" : usuario}, 200
 
 # logout
 @app.route("/logout")
 def logout():
     session.clear()
 
-    return redirect("/login")
+    return redirect("/chat")
