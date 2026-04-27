@@ -1,6 +1,6 @@
 function criacao_conta() {
-    const usuario = document.getElementById('usuario').value;
-    const senha = document.getElementById('senha').value;
+    const usuario = document.getElementById('usuario_criacao').value;
+    const senha = document.getElementById('senha_criacao').value;
     const senha_confirma = document.getElementById('senha_confirma').value;
 
     fetch('/criar-conta', {

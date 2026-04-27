@@ -59,6 +59,37 @@ function nova_conversa() {
 
 window.carregarSidebarChats = carregarSidebarChats;
 
+function abrirLoginPopup() {
+    document.getElementById("loginPopup").style.display = "block";
+}
+
+function abrir_criar_conta() {
+    document.getElementById("criar_conta_popup").style.display = "block";
+}
+
+function fecharLoginPopup() {
+    document.getElementById("loginPopup").style.display = "none";
+}
+
+function fechar_criar_conta() {
+    document.getElementById("criar_conta_popup").style.display = "none";
+}
+
+function esconder_login() {
+    document.getElementById("abrir_login").style.display = "none";
+}
+
+function esconder_logout() {
+    document.getElementById("logout").style.display = "none";
+}
+
+// fechar clicando fora
+window.addEventListener("click", function(event) {
+    let popup = document.getElementById("loginPopup");
+    if (event.target === popup) {
+        fecharLoginPopup();
+    }
+});
 // função listas colapsáveis - em comentário porque nao vai ser necessária na versão atual, mas pode ser util futuramente
 //document.addEventListener('DOMContentLoaded', () => {
 //    const toggles = document.querySelectorAll('.toggle-button');
