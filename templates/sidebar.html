@@ -22,12 +22,11 @@
         </div>
 
         {% if usuario == "" %}
-        <button id="abrir_login" onclick="abrirLoginPopup()">
-            <img src="{{ url_for('static', filename='images/botao-nova-conversa.png') }}" alt="">
-            Login
+        <button id="login-or-logout" onclick="abrirLoginPopup()">
+            <img src="{{ url_for('static', filename='images/botao-login.png') }}" alt="Entrar" style="height: 38px;">
         </button>
         {% else %}
-        <button id="logout" onclick="logout()">
+        <button id="login-or-logout" onclick="logout()">
             <img src="{{ url_for('static', filename='images/botao-logout.png') }}" alt="Sair" style="height: 38px;">
         </button>
         {% endif %}

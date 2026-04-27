@@ -23,9 +23,17 @@
       </div>
 
       <div class="header-content">
+        
+        {% if usuario == "" %}
+        <h1 class="chat-title" id="chat-title" data-role="chat-title">
+          >_ Olá, Dev!
+        </h1>
+        {% else %}
         <h1 class="chat-title" id="chat-title" data-role="chat-title">
           >_ Olá{{ usuario }}!
-        </h1>
+        </h1>        
+        {% endif %}
+
         <p class="chat-subtitle" id="chat-subtitle">
           Eu sou o Boole, o seu tutor de programação. Me pergunte sobre alguma linguagem, uma dúvida ou código seu.
         </p>

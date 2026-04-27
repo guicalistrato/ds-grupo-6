@@ -97,7 +97,7 @@
   padding: 10px;
 }
 
-#logout {
+#login-or-logout {
   margin-top: auto; /* botão fica no final da sidebar */
   align-self: flex-start;
   background-color: transparent;
