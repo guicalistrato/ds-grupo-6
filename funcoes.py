@@ -80,21 +80,16 @@ def obter_duvida(usuario, duvida_id):
         return None
 
 # cria um id único
-def criar_id():
+def criar_id(tamanho):
     timeseed = int(time.time())
     seed(timeseed)
 
+    caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     codigo = ''
-    for i in range(20):
-        num = chr(randint(48, 57)) # intervalo dos numeros em ascii
-        letra = chr(randint(65, 90)) # intervalo das letras maiusculas em ascii
-        prob = randint(1, 2)
-
-        # seleciona um numero ou letra aleatorio para adicionar ao codigo
-        if prob == 1:
-            codigo += num
-        else:
-            codigo += letra
+    for i in range(tamanho):
+        prob = randint(0, 35)
+        # seleciona um caractere aleatorio para adicionar ao codigo
+        codigo += caracteres[prob]
 
     return(codigo)
 

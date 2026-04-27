@@ -57,7 +57,7 @@ def chat_post(id_chat=None):
 
     if not id_chat:
         # Se não recebemos um id_chat na URL, significa que é a primeira mensagem
-        id_chat = criar_id()
+        id_chat = criar_id(20)
         novo_chat = True
     else:
         # Se já temos o id_chat na URL, apenas continuamos usando ele!
