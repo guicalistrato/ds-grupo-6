@@ -1,110 +1,173 @@
 # Boole
 
-## Descrição
+Boole é um tutor de programação baseado em inteligência artificial, desenvolvido para auxiliar alunos iniciantes no aprendizado de lógica e programação. O sistema responde dúvidas sem fornecer código ou soluções prontas, em vez disso, explica conceitos, usa analogias e guia o aluno com perguntas, promovendo o raciocínio independente.
 
-Boole é um projeto inicial de integração com a API do modelo de linguagem Gemini. O objetivo desta etapa do projeto foi validar a comunicação entre um sistema local e um modelo de linguagem, criando um protótipo capaz de enviar perguntas e receber respostas geradas pela API.
+---
 
-O sistema permite enviar perguntas e receber respostas geradas pela API, funcionando como um protótipo inicial de um tutor inteligente para apoio ao estudo de programação.
+## Stack
 
-Um dos diferenciais do Boole é sua abordagem pedagógica: o sistema não fornece código ou soluções prontas, mas auxilia o usuário no desenvolvimento do raciocínio lógico e na compreensão dos problemas.
+**Backend**
+- Python 3.8+ com Flask
+- SQLite para persistência de dados
+- Flask-Session para gerenciamento de sessões (filesystem)
+- Google Gemini API (`gemini-2.5-flash`) para o tutor IA
+- Werkzeug para hash de senhas
 
-Essa integração será utilizada posteriormente no desenvolvimento de um sistema de recomendação voltado ao aprendizado de programação.
-
-Nesta fase do projeto foram implementadas duas funcionalidades principais:
-
-- teste de chamadas básicas da API com exemplos fixos;
-- criação de um código mínimo funcional que gera respostas utilizando a API.
-- interface web simples utilizando Streamlit (extensão complementar).
+**Frontend**
+- HTML/CSS/JavaScript
+- Jinja2 templates
+- Arquivos estáticos em `static/` (CSS, JS, imagens)
 
 ---
 
 ## Estrutura do projeto
 
-```text
+```
 boole/
-├── docs/
-│   ├── entregas.md
-│   └── requisitos.md
-├── .env.local
+├── app.py                  # Aplicação Flask (rotas, autenticação, histórico)
+├── boole.py                # Integração com Google Gemini API
+├── db_init.py              # Inicialização do banco de dados
+├── funcoes.py              # Decorador @login_required
+├── test_app.py             # Suite de testes automatizados (pytest)
+├── requirements.txt        # Dependências
+├── dados.db                # Banco SQLite (gerado automaticamente)
+├── .env.local              # Variáveis de ambiente (não commitar)
 ├── .gitignore
-├── app.py
-├── run_boole.py
-├── test_boole.py
-├── requirements.txt
-└── README.md
+│
+├── templates/
+│   ├── index.html          # Página principal do chat
+│   ├── login.html          # Página de login
+│   ├── criar_conta.html    # Página de criação de conta
+│   └── sidebar.html        # Componente sidebar
+│
+├── static/
+│   ├── behavior/           # JavaScript por página
+│   └── style/              # CSS por página
+│
+└── docs/
+    ├── requisitos.md
+    └── entregas.md
 ```
 
 ---
 
-## Tecnologias utilizadas
+## Como rodar localmente
 
-- Python
-- API Gemini
-- biblioteca `google-genai`
-- biblioteca `python-dotenv`
-- Streamlit
+### 1. Clonar o repositório
 
----
+```bash
+git clone <url-do-repositorio>
+cd boole
+```
 
-## Como executar o projeto
+### 2. Criar ambiente virtual
 
-### 1. Instalar dependências
+```bash
+python -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+```
+
+### 3. Instalar dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Criar arquivo `.env.local`
+### 4. Configurar variáveis de ambiente
 
-Criar um arquivo `.env.local` na raiz do projeto contendo a chave da API:
+Crie um arquivo `.env.local` na raiz do projeto:
 
 ```env
 GEMINI_API_KEY=sua_chave_aqui
 ```
 
-### 3. Testar chamada básica da API
+Obtenha sua chave gratuitamente em: https://aistudio.google.com/apikey
+
+### 5. Inicializar o banco de dados
 
 ```bash
-python test_boole.py
+python db_init.py
 ```
 
-Esse script envia um prompt fixo para a API e imprime a resposta no terminal.
-
-### 4. Executar o script funcional
+### 6. Rodar a aplicação
 
 ```bash
-python run_boole.py "Explique o que é um algoritmo"
+python app.py
 ```
 
-Esse script recebe uma pergunta informada pelo usuário e retorna uma resposta gerada pelo modelo.
+Acesse: http://localhost:5000
 
 ---
 
-### 5. Executar interface com Streamlit
+## Rotas da API
 
-```bash
-streamlit run app.py
-```
-Esse comando inicia uma interface web simples para interação com o modelo Gemini.
+| Método | Rota | Descrição | Autenticação |
+|--------|------|-----------|--------------|
+| GET | `/` | Página do chat | Não obrigatória |
+| POST | `/` | Enviar dúvida ao Boole | Não obrigatória |
+| POST | `/continuar-sem-login` | Iniciar sessão anônima | — |
+| GET | `/login` | Página de login | — |
+| POST | `/login` | Autenticar usuário | — |
+| GET | `/criar-conta` | Página de criação de conta | — |
+| POST | `/criar-conta` | Registrar novo usuário | — |
+| GET | `/historico` | Listar histórico de dúvidas | Obrigatória |
+| GET | `/historico/<id>` | Obter dúvida específica | Obrigatória |
 
-## Resultado esperado
-
-O sistema envia uma pergunta para o modelo Gemini e retorna uma resposta textual gerada pela API, exibindo o resultado diretamente no terminal. As respostas seguem uma abordagem orientada ao aprendizado, auxiliando o usuário na compreensão do problema sem fornecer código ou solução pronta.
+Usuários anônimos podem usar o chat, mas as dúvidas não são salvas e o histórico não está disponível.
 
 ---
 
-## Objetivo desta etapa
+## Banco de dados
 
-Esta etapa do projeto tem como objetivo validar:
+```sql
+CREATE TABLE usuarios (
+    usuario TEXT PRIMARY KEY,
+    senha   TEXT NOT NULL
+);
 
-- comunicação com uma API de modelo de linguagem;
-- uso de variáveis de ambiente para credenciais;
-- execução de scripts Python para interação com a API;
-- implementação de um código mínimo funcional para geração de respostas.
-- possibilidade de evolução para interfaces web e sistemas mais complexos.
+CREATE TABLE duvidas (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario      TEXT NOT NULL,
+    pergunta     TEXT NOT NULL,
+    resposta     TEXT NOT NULL,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario) REFERENCES usuarios(usuario)
+);
+```
 
-## Próximos passos
+---
 
-- aprimorar o controle do comportamento do modelo (prompt engineering);
-- implementar histórico de interações;
-- evoluir a interface web;
+## Testes
+
+```bash
+pytest test_app.py -v
+```
+
+A suite cobre autenticação, criação de conta, histórico e sessão anônima usando banco de dados em memória — sem dependência do `dados.db` real e sem chamadas à API do Gemini.
+
+---
+
+## Segurança
+
+- Senhas armazenadas com hash (Werkzeug)
+- Queries SQL com prepared statements — sem concatenação de strings
+- Isolamento de dados por usuário em todas as queries
+- Sessões armazenadas no servidor (filesystem), não em cookies
+- Headers de cache control para prevenir acesso a versões antigas
+
+---
+
+## Equipe
+
+| Nome | Papel |
+|------|-------|
+| Gabriela Benevides | Product Owner, Scrum Master, Front-end |
+| Guilherme Calistrato | Líder Técnico, Back-end, Front-end, Integração |
+| Luiz Henrique Falcão | Líder Back-end, Banco de Dados, Engenharia de Prompt |
+| Leon Galvão | Líder Front-end, UI/UX |
+| Ithalo Ferreira | Desenvolvedor Front-end |
+| Keroly Santos | QA e Testes |
+| Alandrey Silva | Desenvolvedor Front-end |
+
+UFPE — Centro de Informática
