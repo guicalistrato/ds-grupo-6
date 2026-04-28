@@ -170,6 +170,8 @@ MANTER JUSTIFY-CONTENT BOT-FLEX-START E USER-FLEX-END*/
 
 /*As bolhas de mensagem e a diferenciação da cor da bolha de mensagem do usuário*/
 .bubble {
+  /*Para aumentar ou diminuir a largura das mensagens, mexer na propriedade max-width
+  (no momento ela pega o menor valor entre 560px e 85%px da tela)*/
   max-width: min(560px, 85%);
   display: flex;
   flex-wrap: wrap;
@@ -180,7 +182,9 @@ MANTER JUSTIFY-CONTENT BOT-FLEX-START E USER-FLEX-END*/
   font-size: 0.98rem;
   line-height: 1.45;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-  margin-left: 100px;
+  /*Caso queira afastar ou aproximar mais as mensagens, mexer nas margens abaixo
+  (deixar ambas as margens iguais para deixar o chat centralizado)*/
+  margin-left: 100px; 
   margin-right: 100px;
 }
 
